@@ -1,0 +1,10 @@
+{% if prediction_list %}
+    <ul>
+    {% for prediction in prediction_list %}
+        <li><a href="{% url 'detail' prediction.id %}">{{ prediction.text }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No predictions are available.</p>
+{% endif %}
+
