@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'social_django',
+    'rest_framework',
 ]
 
 LOGIN_REQUIRED_FOR_CRUD = False
