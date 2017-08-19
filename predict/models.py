@@ -8,7 +8,8 @@ class Prediction(models.Model):
     creator = models.ForeignKey(User, related_name="creator")
     opponent = models.ForeignKey(User, related_name="opponent")
     witness = models.ForeignKey(User, related_name="witness")
+    witness_confirmed = models.BooleanField(default=False)
+    opponent_confirmed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.text
-
