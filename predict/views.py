@@ -1,31 +1,42 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy
+from django.db.models import Q
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.contrib.admin.widgets import AdminDateWidget
-from rest_framework.views import APIView
-from rest_framework.response import Response
 
 from predict.models import Prediction
-from predict.serializers import PredictionSerializer
 
 
-class ListMyPredictions(LoginRequiredMixin,APIView):
+# class ListMyPredictions(LoginRequiredMixin, APIView):
+#     def get(self, request, format=None):
+#         current_user = self.request.user
+#         predictions = filter(
+#             lambda p: p.creator == current_user or p.witness == current_user or p.opponent == current_user,
+#             Prediction.objects.all())
+#         serializer = PredictionSerializer(predictions, many=True)
+#         return Response(serializer.data)
 
-    def get(self, request, format=None):
 
+class MyPredictionList(LoginRequiredMixin, ListView):
+    model = Prediction
+    template_name = "predict/my_prediction_list.html"
+
+    def get_queryset(self):
         current_user = self.request.user
-        predictions = filter(lambda p: p.creator == current_user,Prediction.objects.all())
-        serializer = PredictionSerializer(predictions, many=True,context={'request':request})
-        return Response(serializer.data)
+        print(str(current_user))
+        predictions = Prediction.objects.filter(
+            Q(creator=current_user) | Q(witness=current_user) | Q(opponent=current_user)).order_by('-date')
+        return predictions
 
 
 class PredictionList(LoginRequiredMixin, ListView):
     model = Prediction
 
     def get_queryset(self):
-        print(self.request.user)
-        return super().get_queryset()
+        current_user = self.request.user
+        print(str(current_user))
+        predictions = Prediction.objects.all().order_by('-date')
+        return predictions
 
 
 class PredictionCreate(LoginRequiredMixin, CreateView):
@@ -40,8 +51,6 @@ class PredictionUpdate(LoginRequiredMixin, UpdateView):
     fields = ['text', 'date', 'creator', 'opponent', 'witness']
 
 
-
 class PredictionDelete(LoginRequiredMixin, DeleteView):
     model = Prediction
     success_url = reverse_lazy('prediction_list')
-
