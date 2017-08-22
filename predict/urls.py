@@ -8,6 +8,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.MyPredictionList.as_view(), name='my_prediction_list'),
     url(r'^all$', views.PredictionList.as_view(), name='prediction_list'),
+    url(r'^test1$', views.PredictionNew.as_view()),
     url(r'^new$', views.PredictionCreate.as_view(), name='prediction_new'),
     url(r'^edit/(?P<pk>\d+)$', views.PredictionUpdate.as_view(), name='prediction_edit'),
     url(r'^delete/(?P<pk>\d+)$', views.PredictionDelete.as_view(), name='prediction_delete'),

@@ -2,8 +2,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.views.generic import ListView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 
+from predict.forms import NewPredictionForm
 from predict.models import Prediction
 
 
@@ -54,3 +55,16 @@ class PredictionUpdate(LoginRequiredMixin, UpdateView):
 class PredictionDelete(LoginRequiredMixin, DeleteView):
     model = Prediction
     success_url = reverse_lazy('prediction_list')
+
+
+class PredictionNew(FormView):
+    template_name = 'new.html'
+    form_class = NewPredictionForm
+    success_url = '/thanks.html'
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        print(form.cleaned_data['witness_email'])
+        form.sendEmail()
+        return super(PredictionNew, self).form_valid(form)
