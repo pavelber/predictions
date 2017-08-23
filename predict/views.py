@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormVi
 
 from predict.forms import NewPredictionForm
 from predict.models import Prediction
-
+import re
 
 # class ListMyPredictions(LoginRequiredMixin, APIView):
 #     def get(self, request, format=None):
@@ -40,12 +40,6 @@ class PredictionList(LoginRequiredMixin, ListView):
         return predictions
 
 
-class PredictionCreate(LoginRequiredMixin, CreateView):
-    model = Prediction
-    success_url = reverse_lazy('prediction_list')
-    fields = ['text', 'date', 'creator', 'opponent', 'witness']
-
-
 class PredictionUpdate(LoginRequiredMixin, UpdateView):
     model = Prediction
     success_url = reverse_lazy('prediction_list')
@@ -57,14 +51,12 @@ class PredictionDelete(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('prediction_list')
 
 
-class PredictionNew(FormView):
+class PredictionNew(LoginRequiredMixin, FormView):
     template_name = 'new.html'
     form_class = NewPredictionForm
-    success_url = '/thanks.html'
+    success_url = '/'
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        print(form.cleaned_data['witness_email'])
-        form.sendEmail()
+        current_user = self.request.user
+        form.create_prediction(current_user)
         return super(PredictionNew, self).form_valid(form)

@@ -158,7 +158,7 @@ SOCIAL_AUTH_CREATE_USERS = True
 SOCIAL_AUTH_FACEBOOK_API_VERSION = '2.9'
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
-SOCIAL_AUTH_GITHUB_SCOPE = ['email']
+SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
@@ -178,33 +178,5 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
     'social_core.pipeline.social_auth.associate_by_email',
-   # 'predictsite.settings.update_user_social_data',
 )
 
-def update_user_social_data(request, *args, **kwargs):
-    user = kwargs['user']
-    fbuid = kwargs['response']['id']
-    access_token = kwargs['response']['access_token']
-    url = "https://api.github.com/user/emails?access_token={0}".format(access_token,)
-    try:
-        response = urllib.request.urlopen(url).read()
-    except Exception as e:
-        print(str(e))
-
-    # if not kwargs['is_new']:
-    #     return
-    # if kwargs['backend'].__class__.__name__ == 'FacebookBackend':
-    #     fbuid = kwargs['response']['id']
-    #     access_token = kwargs['response']['access_token']
-    #
-    #     url = 'https://graph.facebook.com/{0}/' \
-    #           '?fields=email,gender,name' \
-    #           '&access_token={1}'.format(fbuid, access_token,)
-    #
-    #     photo_url = "http://graph.facebook.com/%s/picture?type=large" \
-    #         % kwargs['response']['id']
-    #     request = urllib.Request(url)
-    #     response = urllib.urlopen(request).read()
-    #     email = json.loads(response).get('email')
-    #     name = json.loads(response).get('name')
-    #     gender = json.loads(response).get('gender')
