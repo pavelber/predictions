@@ -14,7 +14,7 @@ class NewPredictionForm(forms.Form):
         try:
             witness = Predictor.objects.get(email=witness_email)
         except Predictor.DoesNotExist:
-            witness = Predictor(email=witness_email)
+            witness = Predictor(username=witness_email, email=witness_email)
             witness.save()
             witness.send_invite_email(creator)
 
@@ -22,7 +22,7 @@ class NewPredictionForm(forms.Form):
         try:
             opponent = Predictor.objects.get(email=opponent_email)
         except Predictor.DoesNotExist:
-            opponent = Predictor(email=opponent_email)
+            opponent = Predictor(username=opponent_email, email=opponent_email)
             opponent.save()
             opponent.send_invite_email(creator)
 

@@ -1,17 +1,27 @@
+from decouple import config
 from django.contrib.auth.models import User
-from django.db import models
-from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
+from django.core.mail import send_mail
+from django.db import models
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
-class Predictor(User):
 
+class Predictor(User):
     class Meta:
         proxy = True
 
+    def name(self):
+        Predictor.fullname(self)
+
+    @staticmethod
+    def fullname(user):
+        return user.first_name + " " + user.last_name
+
     def send_invite_email(self, creator):
-        pass
+        send_email("Welcome to Predictions Web site!",
+                   config('DEFAULT_FROM_EMAIL'), self.email, 'email_welcome.html',
+                   {'creator': Predictor.fullname(creator), 'link': config('SITE_URL')})
 
 
 class Prediction(models.Model):
