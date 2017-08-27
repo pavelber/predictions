@@ -18,10 +18,14 @@ class Predictor(User):
     def fullname(user):
         return user.first_name + " " + user.last_name
 
-    def send_invite_email(self, creator):
+    def send_email(self, creator, role, new_user):
         send_email("Welcome to Predictions Web site!",
-                   config('DEFAULT_FROM_EMAIL'), self.email, 'email_welcome.html',
-                   {'creator': Predictor.fullname(creator), 'link': config('SITE_URL')})
+                   config('DEFAULT_FROM_EMAIL'), self.email, 'email_invitation.html',
+                   {'creator': Predictor.fullname(creator),
+                    'link': config('SITE_URL'),
+                    'role': role,
+                    'new_user': new_user
+                    })
 
 
 class Prediction(models.Model):
@@ -32,6 +36,14 @@ class Prediction(models.Model):
     witness = models.ForeignKey(Predictor, related_name="witness")
     witness_confirmed = models.BooleanField(default=False)
     opponent_confirmed = models.BooleanField(default=False)
+
+    def get_role(self,user):
+        if user.id == self.witness.id:
+            return "witness"
+        elif user.id == self.opponent.id:
+            return "opponent"
+        else:
+            return None
 
     def send_email(self):
         send_mail(

@@ -1,0 +1,15 @@
+<p>
+Prediction:<br/>
+    {{ text }}
+</p>
+<p>
+Should occur on the date: {{ date }}
+</p>
+
+You are marked in this prediction as {{ role }}
+
+<form action="/confirm" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit" />
+</form>
