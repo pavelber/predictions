@@ -1,21 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.models import Q
 from django.views.generic import ListView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
+from django.views.generic.edit import UpdateView, DeleteView, FormView
 
 from predict.forms import NewPredictionForm, ConfirmPredictionForm
 from predict.models import Prediction
-import re
-
-# class ListMyPredictions(LoginRequiredMixin, APIView):
-#     def get(self, request, format=None):
-#         current_user = self.request.user
-#         predictions = filter(
-#             lambda p: p.creator == current_user or p.witness == current_user or p.opponent == current_user,
-#             Prediction.objects.all())
-#         serializer = PredictionSerializer(predictions, many=True)
-#         return Response(serializer.data)
 
 
 class MyPredictionList(LoginRequiredMixin, ListView):
@@ -54,7 +44,7 @@ class PredictionDelete(LoginRequiredMixin, DeleteView):
 class PredictionNew(LoginRequiredMixin, FormView):
     template_name = 'new.html'
     form_class = NewPredictionForm
-    success_url = '/'
+    success_url = reverse_lazy('my_prediction_list')
 
     def form_valid(self, form):
         current_user = self.request.user
@@ -65,22 +55,40 @@ class PredictionNew(LoginRequiredMixin, FormView):
 class PredictionConfirm(LoginRequiredMixin, FormView):
     template_name = 'confirm.html'
     form_class = ConfirmPredictionForm
-    success_url = '/'
+    success_url = reverse_lazy('my_prediction_list')
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+    def form_invalid(self, form):
+        print(form.errors)
+        return super().form_invalid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super(PredictionConfirm, self).get_form_kwargs()
+        if self.request.method == "GET":
+            kwargs['initial']['pk'] = self.kwargs['pk']
+        return kwargs
 
     def get_context_data(self, **kwargs):
         """Use this to add extra context."""
         context = super(PredictionConfirm, self).get_context_data(**kwargs)
         current_user = self.request.user
-        prediction_id = self.kwargs['pk']
-        prediction = Prediction.objects.get(pk=prediction_id)
-        context['text'] = prediction.text
-        context['date'] = prediction.date
-        context['role'] = prediction.get_role(current_user)
+        if self.request.method == "GET":
+            prediction_id = self.kwargs['pk']
+            prediction = Prediction.objects.get(pk=prediction_id)
+            context['text'] = prediction.text
+            context['date'] = prediction.date
+            context['role'] = prediction.get_role(current_user)
         return context
+
+
 
     def form_valid(self, form):
         current_user = self.request.user
-        return super(PredictionNew, self).form_valid(form)
+        form.save_confirmation(current_user)
+        return super(PredictionConfirm, self).form_valid(form)
+
