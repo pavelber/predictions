@@ -2,7 +2,7 @@
 <ul>
     {% for prediction in object_list %}
     <li>
-    <a href="{% url "prediction_edit" prediction.id %}">{{ prediction.text }}</a>
+    <a href="{% url "prediction_edit" prediction.id %}">{{ prediction.title }}</a>
     <a href="{% url "prediction_delete" prediction.id %}">delete</a>
     </li>
     {% endfor %}

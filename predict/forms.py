@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 from django import forms
 from django.forms import HiddenInput
 
@@ -36,10 +38,18 @@ class ConfirmPredictionForm(forms.Form):
 
 
 class NewPredictionForm(forms.Form):
+    prediction_title = forms.CharField(label='Prediction Title')
     prediction_text = forms.CharField(widget=forms.Textarea, label='Your Prediction')
     prediction_date = forms.DateField(widget=forms.SelectDateWidget, label='Date of predicted event')
     witness_email = forms.EmailField(label='Witness email', required=True)
     opponent_email = forms.EmailField(label='Opponent email', required=True)
+
+    def clean_prediction_date(self):
+        prediction_date = self.cleaned_data['prediction_date']
+        print(type(prediction_date))
+        if prediction_date < date.today()+timedelta(days=7):
+            raise forms.ValidationError("Date should be in a week or more from now!")
+        return prediction_date
 
     def create_prediction(self, creator):
         witness_email = self.cleaned_data['witness_email']
@@ -60,7 +70,7 @@ class NewPredictionForm(forms.Form):
             opponent.save()
             is_new_opponent = True
 
-        prediction = Prediction(text=self.cleaned_data['prediction_text'], date=self.cleaned_data['prediction_date'],
+        prediction = Prediction(text=self.cleaned_data['prediction_text'], title=self.cleaned_data['prediction_title'], date=self.cleaned_data['prediction_date'],
                                 opponent=opponent, witness=witness, witness_confirmed=False, opponent_confirmed=False,
                                 creator=creator)
         prediction.save()

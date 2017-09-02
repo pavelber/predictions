@@ -5,7 +5,8 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.html import strip_tags
-
+from datetime import date, datetime
+from datetime import timedelta
 
 class Predictor(User):
     class Meta:
@@ -29,6 +30,7 @@ class Predictor(User):
 
 
 class Prediction(models.Model):
+    title = models.TextField(default='No Title')
     text = models.TextField()
     date = models.DateTimeField()
     creator = models.ForeignKey(Predictor, related_name="creator")
@@ -36,6 +38,7 @@ class Prediction(models.Model):
     witness = models.ForeignKey(Predictor, related_name="witness")
     witness_confirmed = models.BooleanField(default=False)
     opponent_confirmed = models.BooleanField(default=False)
+    prediction_occurred = models.NullBooleanField(default=None, null=True)
 
     def get_role(self, user):
         if user.id == self.witness.id:
@@ -53,7 +56,7 @@ class Prediction(models.Model):
                     'confirmed': confirmed})
 
     def __str__(self):
-        return self.text
+        return self.title
 
     def send_creator_email(self):
         send_email("Prediction created",
