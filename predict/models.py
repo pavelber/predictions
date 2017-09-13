@@ -40,6 +40,8 @@ class Prediction(models.Model):
     opponent_confirmed = models.BooleanField(default=False)
     prediction_occurred = models.NullBooleanField(default=None, null=True)
 
+    observers = models.ManyToManyField(Predictor);
+
     def get_role(self, user):
         if user.id == self.witness.id:
             return "witness"
