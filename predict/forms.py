@@ -74,6 +74,6 @@ class NewPredictionForm(forms.Form):
                                 opponent=opponent, witness=witness, witness_confirmed=False, opponent_confirmed=False,
                                 creator=creator)
         prediction.save()
-        witness.send_email(creator, "witness", is_new_witness, prediction.id)
-        opponent.send_email(creator, "opponent", is_new_opponent, prediction.id)
+        witness.send_invitation_email(creator, "witness", is_new_witness, prediction.id)
+        opponent.send_invitation_email(creator, "opponent", is_new_opponent, prediction.id)
         prediction.send_creator_email()

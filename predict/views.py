@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.views.generic import ListView
 from django.views.generic.edit import UpdateView, DeleteView, FormView
@@ -33,7 +33,7 @@ class PredictionList(LoginRequiredMixin, ListView):
 class PredictionUpdate(LoginRequiredMixin, UpdateView):
     model = Prediction
     success_url = reverse_lazy('prediction_list')
-    fields = ['text', 'date', 'creator', 'opponent', 'witness']
+    fields = ['title', 'text', 'date', 'creator', 'opponent', 'witness']
 
 
 class PredictionDelete(LoginRequiredMixin, DeleteView):
@@ -85,10 +85,7 @@ class PredictionConfirm(LoginRequiredMixin, FormView):
             context['role'] = prediction.get_role(current_user)
         return context
 
-
-
     def form_valid(self, form):
         current_user = self.request.user
         form.save_confirmation(current_user)
         return super(PredictionConfirm, self).form_valid(form)
-

@@ -5,8 +5,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.html import strip_tags
-from datetime import date, datetime
-from datetime import timedelta
+
 
 class Predictor(User):
     class Meta:
@@ -19,13 +18,25 @@ class Predictor(User):
     def fullname(user):
         return user.first_name + " " + user.last_name
 
-    def send_email(self, creator, role, is_new_user, prediction_id):
+    def send_invitation_email(self, creator, role, is_new_user):
         send_email("You are invited participate in prediction",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_invitation.html',
                    {'creator': Predictor.fullname(creator),
-                    'link': config('SITE_URL') + reverse('prediction_confirm', kwargs={'pk': prediction_id}),
+                    'link': config('SITE_URL') + reverse('prediction_confirm', kwargs={'pk': self.id}),
                     'role': role,
                     'new_user': is_new_user
+                    })
+
+    def send_before_email(self):
+        send_email("Prediction: one week to decision",
+                   config('DEFAULT_FROM_EMAIL'), self.email, 'email_before.html',
+                   {'link': config('SITE_URL') + reverse('prediction_edit', kwargs={'pk':  self.id})})
+
+    def send_after_reminder_email(self):
+        send_email("Prediction: decision was not made!",
+                   config('DEFAULT_FROM_EMAIL'), self.email, 'email_after.html',
+                   {'creator': Predictor.fullname(self),
+                    'link': config('SITE_URL') + reverse('prediction_edit', kwargs={'pk':  self.id})
                     })
 
 
@@ -39,6 +50,9 @@ class Prediction(models.Model):
     witness_confirmed = models.BooleanField(default=False)
     opponent_confirmed = models.BooleanField(default=False)
     prediction_occurred = models.NullBooleanField(default=None, null=True)
+    before_mails_sent = models.BooleanField(default=False)
+    date_mail_sent = models.BooleanField(default=False)
+    after_mails_sent = models.BooleanField(default=False)
 
     observers = models.ManyToManyField(Predictor);
 
@@ -63,6 +77,11 @@ class Prediction(models.Model):
     def send_creator_email(self):
         send_email("Prediction created",
                    config('DEFAULT_FROM_EMAIL'), self.creator.email, 'email_creation.html',
+                   {'link': config('SITE_URL') + reverse('my_prediction_list')})
+
+    def send_witness_email(self):
+        send_email("Prediction: It's time to decide",
+                   config('DEFAULT_FROM_EMAIL'), self.witness.email, 'email_time_to_decide.html',
                    {'link': config('SITE_URL') + reverse('my_prediction_list')})
 
 
