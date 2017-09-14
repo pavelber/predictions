@@ -5,7 +5,13 @@ from django.forms import HiddenInput
 
 from predict.models import Prediction, Predictor
 
-CHOICES = (
+CHOICES_YES_NO = (
+    (True, 'Yes'),
+    (False, 'No')
+)
+
+CHOICES_THINKING_YES_NO = (
+    (None, '---'),
     (True, 'Yes'),
     (False, 'No')
 )
@@ -13,7 +19,7 @@ CHOICES = (
 
 class ConfirmPredictionForm(forms.Form):
     agree = forms.TypedChoiceField(
-        choices=CHOICES,
+        choices=CHOICES_YES_NO,
         label="Agree to participate",
         required=True)
     pk = forms.IntegerField(widget=HiddenInput)
@@ -74,6 +80,34 @@ class NewPredictionForm(forms.Form):
                                 opponent=opponent, witness=witness, witness_confirmed=False, opponent_confirmed=False,
                                 creator=creator)
         prediction.save()
-        witness.send_invitation_email(creator, "witness", is_new_witness, prediction.id)
-        opponent.send_invitation_email(creator, "opponent", is_new_opponent, prediction.id)
+        witness.send_invitation_email(creator, "witness", is_new_witness)
+        opponent.send_invitation_email(creator, "opponent", is_new_opponent)
         prediction.send_creator_email()
+
+
+class PredictionForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        details_editable = kwargs.pop('details_editable')
+        show_witness_confirmation = kwargs.pop('show_witness_confirmation')
+        show_opponent_confirmation = kwargs.pop('show_opponent_confirmation')
+        show_prediction_confirmation = kwargs.pop('show_prediction_confirmation')
+        show_names = kwargs.pop('show_names')
+        show_subscribe = kwargs.pop('show_subscribe')
+        super(PredictionForm, self).__init__(*args, **kwargs)
+        self.fields['prediction_title'].widget.attrs['readonly'] = details_editable
+        self.fields['prediction_text'].widget.attrs['readonly'] = details_editable
+        self.fields['prediction_date'].widget.attrs['readonly'] = details_editable
+        self.fields['witness_email'].widget.attrs['readonly'] = details_editable
+        self.fields['opponent_email'].widget.attrs['readonly'] = details_editable
+        self.fields['witness_confirmed'].widget.attrs['readonly'] = show_witness_confirmation
+        self.fields['witness_confirmed'].widget.attrs['readonly'] = show_opponent_confirmation
+
+    prediction_title = forms.CharField()
+    prediction_text = forms.CharField(widget=forms.Textarea)
+    prediction_date = forms.DateField(widget=forms.SelectDateWidget)
+    witness_email = forms.EmailField()
+    opponent_email = forms.EmailField()
+    witness_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO)
+    opponent_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO)
+    prediction_occurred = forms.TypedChoiceField(choices=CHOICES_THINKING_YES_NO)
+    subscribed = forms.TypedChoiceField(choices=CHOICES_YES_NO)
