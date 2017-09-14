@@ -12,7 +12,11 @@ class Predictor(User):
         proxy = True
 
     def fullname(self):
-        return self.first_name + " " + self.last_name
+        if (self.first_name and self.first_name != "") or (self.last_name and self.last_name != ""):
+            name = self.first_name + " " + self.last_name
+        else:
+            name = self.email
+        return name
 
     def send_invitation_email(self, creator, role, is_new_user):
         send_email("You are invited participate in prediction",

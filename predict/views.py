@@ -63,8 +63,8 @@ class PredictionView(LoginRequiredMixin, FormView):
         initial['prediction_title'] = prediction.title
         initial['prediction_text'] = prediction.text
         initial['prediction_date'] = prediction.date
-        initial['witness_email'] = prediction.witness.email
-        initial['opponent_email'] = prediction.opponent.email
+        initial['witness_email'] = prediction.witness.fullname()
+        initial['opponent_email'] = prediction.opponent.fullname()
         initial['witness_confirmed'] = prediction.witness_confirmed
         initial['opponent_confirmed'] = prediction.opponent_confirmed
         initial['prediction_occurred'] = prediction.prediction_occurred
