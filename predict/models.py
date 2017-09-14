@@ -11,17 +11,13 @@ class Predictor(User):
     class Meta:
         proxy = True
 
-    def name(self):
-        Predictor.fullname(self)
-
-    @staticmethod
-    def fullname(user):
-        return user.first_name + " " + user.last_name
+    def fullname(self):
+        return self.first_name + " " + self.last_name
 
     def send_invitation_email(self, creator, role, is_new_user):
         send_email("You are invited participate in prediction",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_invitation.html',
-                   {'creator': Predictor.fullname(creator),
+                   {'creator': self.fullname(),
                     'link': config('SITE_URL') + reverse('prediction_confirm', kwargs={'pk': self.id}),
                     'role': role,
                     'new_user': is_new_user
@@ -35,7 +31,7 @@ class Predictor(User):
     def send_after_reminder_email(self):
         send_email("Prediction: decision was not made!",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_after.html',
-                   {'creator': Predictor.fullname(self),
+                   {'creator': self.fullname(),
                     'link': config('SITE_URL') + reverse('prediction_edit', kwargs={'pk':  self.id})
                     })
 

@@ -94,17 +94,20 @@ class PredictionForm(forms.Form):
         show_names = kwargs.pop('show_names')
         show_subscribe = kwargs.pop('show_subscribe')
         super(PredictionForm, self).__init__(*args, **kwargs)
-        self.fields['prediction_title'].widget.attrs['readonly'] = details_editable
-        self.fields['prediction_text'].widget.attrs['readonly'] = details_editable
-        self.fields['prediction_date'].widget.attrs['readonly'] = details_editable
-        self.fields['witness_email'].widget.attrs['readonly'] = details_editable
-        self.fields['opponent_email'].widget.attrs['readonly'] = details_editable
+        self.fields['prediction_title'].widget.attrs['readonly'] = not details_editable
+        self.fields['prediction_text'].widget.attrs['readonly'] = not details_editable
+        self.fields['prediction_date'].widget.attrs['readonly'] = not details_editable
+        self.fields['creator_name'].widget.attrs['readonly'] = True
+        self.fields['witness_email'].widget.attrs['readonly'] = not details_editable
+        self.fields['opponent_email'].widget.attrs['readonly'] = not details_editable
         self.fields['witness_confirmed'].widget.attrs['readonly'] = show_witness_confirmation
-        self.fields['witness_confirmed'].widget.attrs['readonly'] = show_opponent_confirmation
+        self.fields['opponent_confirmed'].widget.attrs['readonly'] = show_opponent_confirmation
+        self.fields['prediction_occurred'].widget.attrs['readonly'] = show_prediction_confirmation
 
     prediction_title = forms.CharField()
     prediction_text = forms.CharField(widget=forms.Textarea)
     prediction_date = forms.DateField(widget=forms.SelectDateWidget)
+    creator_name = forms.CharField()
     witness_email = forms.EmailField()
     opponent_email = forms.EmailField()
     witness_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO)

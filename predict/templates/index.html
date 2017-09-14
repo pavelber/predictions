@@ -1,7 +1,7 @@
 {% if prediction_list %}
     <ul>
     {% for prediction in prediction_list %}
-        <li><a href="{% url 'detail' prediction.id %}">{{ prediction.text }}</a></li>
+        <li><a href="{% url 'prediction' prediction.id %}">{{ prediction.title }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

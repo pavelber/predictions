@@ -68,6 +68,7 @@ class PredictionView(LoginRequiredMixin, FormView):
         initial['witness_confirmed'] = prediction.witness_confirmed
         initial['opponent_confirmed'] = prediction.opponent_confirmed
         initial['prediction_occurred'] = prediction.prediction_occurred
+        initial['creator_name'] = prediction.creator.fullname()
         return initial
 
     def get_context_data(self, **kwargs):
