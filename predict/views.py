@@ -1,39 +1,46 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
-from django.views.generic import ListView
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.views.generic import ListView, TemplateView
 from django.views.generic.edit import UpdateView, DeleteView, FormView
 
 from predict.forms import NewPredictionForm, ConfirmPredictionForm, PredictionForm
-from predict.models import Prediction
+from predict.models import Prediction, PredictionWithRole
 
 
-class MyPredictionList(LoginRequiredMixin, ListView):
-    model = Prediction
-    template_name = "predict/my_prediction_list.html"
+class MyPredictionList(LoginRequiredMixin, TemplateView):
+    template_name = "predict/prediction_list.html"
 
-    def get_queryset(self):
+    def get(self, request, *args, **kwargs):
+        # <view logic>
+        return render(request, self.template_name,
+                      {'predictions': self.get_predictions(),
+                       "title":"My Predictions"})
+
+    def get_predictions(self):
         current_user = self.request.user
-        print(str(current_user))
         predictions = Prediction.objects.filter(
             Q(creator=current_user) | Q(witness=current_user) | Q(opponent=current_user)).order_by('-date')
-        return predictions
+        role_predictions = map(lambda p: PredictionWithRole(p, get_role(p, current_user)), predictions)
+        return list(role_predictions)
 
 
-class PredictionList(LoginRequiredMixin, ListView):
-    model = Prediction
+class PredictionList(LoginRequiredMixin, TemplateView):
+    template_name = "predict/prediction_list.html"
 
-    def get_queryset(self):
+    def get(self, request, *args, **kwargs):
+        # <view logic>
+        return render(request, self.template_name,
+                      {'predictions': self.get_predictions(),
+                       "title": "All Predictions"})
+
+    def get_predictions(self):
         current_user = self.request.user
-        print(str(current_user))
         predictions = Prediction.objects.all().order_by('-date')
-        return predictions
-
-
-class PredictionUpdate(LoginRequiredMixin, UpdateView):
-    model = Prediction
-    success_url = reverse_lazy('prediction_list')
-    fields = ['title', 'text', 'date', 'creator', 'opponent', 'witness']
+        role_predictions = map(lambda p: PredictionWithRole(p, get_role(p, current_user)), predictions)
+        return list(role_predictions)
 
 
 class PredictionDelete(LoginRequiredMixin, DeleteView):
@@ -144,3 +151,16 @@ class PredictionConfirm(LoginRequiredMixin, FormView):
         current_user = self.request.user
         form.save_confirmation(current_user)
         return super(PredictionConfirm, self).form_valid(form)
+
+
+def get_role(p, current_user):
+    if p.creator == current_user:
+        return "creator"
+    elif p.opponent == current_user:
+        return "opponent"
+    elif p.witness == current_user:
+        return "witness"
+    elif current_user in p.observers.all():
+        return "observer"
+    else:
+        return ""

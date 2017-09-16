@@ -1,11 +1,13 @@
-<h1>Predictions</h1>
+<h1>{{ title }} </h1>
 <ul>
-    {% for prediction in object_list %}
+    {% for role_prediction in predictions %}
     <li>
-    <a href="{% url "prediction_edit" prediction.id %}">{{ prediction.title }}</a>
-    <a href="{% url "prediction_delete" prediction.id %}">delete</a>
+    <a href="{% url "prediction" role_prediction.prediction.id %}">{{ role_prediction.prediction.title }}</a>
+    ( {{  role_prediction.role }} )
     </li>
     {% endfor %}
 </ul>
 
-<a href="{% url "prediction_new" %}">New</a>
+<a href="{% url "prediction_list" %}">All Predictions</a> <br/>
+<a href="{% url "my_prediction_list" %}">My Predictions</a>  <br/><br/>
+<a href="{% url "prediction_new" %}">Create New Prediction</a>

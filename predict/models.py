@@ -30,13 +30,13 @@ class Predictor(User):
     def send_before_email(self):
         send_email("Prediction: one week to decision",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_before.html',
-                   {'link': config('SITE_URL') + reverse('prediction_edit', kwargs={'pk':  self.id})})
+                   {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk':  self.id})})
 
     def send_after_reminder_email(self):
         send_email("Prediction: decision was not made!",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_after.html',
                    {'creator': self.fullname(),
-                    'link': config('SITE_URL') + reverse('prediction_edit', kwargs={'pk':  self.id})
+                    'link': config('SITE_URL') + reverse('prediction', kwargs={'pk':  self.id})
                     })
 
 
@@ -85,6 +85,12 @@ class Prediction(models.Model):
                    {'link': config('SITE_URL') + reverse('my_prediction_list')})
 
 
+class PredictionWithRole:
+    def __init__(self, prediction, role):
+        self.prediction = prediction
+        self.role = role
+
+
 def send_email(subject, from_email, to, template, ctx):
     html_content = render_to_string(template, ctx)  # ...
     text_content = strip_tags(html_content)  # this strips the html, so people will have the text as well.
@@ -93,3 +99,5 @@ def send_email(subject, from_email, to, template, ctx):
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
+
+
