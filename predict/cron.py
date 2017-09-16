@@ -59,4 +59,4 @@ def check_one_week_after():
 
 
 def today():
-    return localtime(datatime.datetime.now()).date().today()
+    return localtime(now()).date().today()
