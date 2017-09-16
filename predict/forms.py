@@ -53,7 +53,7 @@ class NewPredictionForm(forms.Form):
     def clean_prediction_date(self):
         prediction_date = self.cleaned_data['prediction_date']
         print(type(prediction_date))
-        if prediction_date < date.today()+timedelta(days=7):
+        if prediction_date < date.today() + timedelta(days=7):
             raise forms.ValidationError("Date should be in a week or more from now!")
         return prediction_date
 
@@ -76,7 +76,8 @@ class NewPredictionForm(forms.Form):
             opponent.save()
             is_new_opponent = True
 
-        prediction = Prediction(text=self.cleaned_data['prediction_text'], title=self.cleaned_data['prediction_title'], date=self.cleaned_data['prediction_date'],
+        prediction = Prediction(text=self.cleaned_data['prediction_text'], title=self.cleaned_data['prediction_title'],
+                                date=self.cleaned_data['prediction_date'],
                                 opponent=opponent, witness=witness, witness_confirmed=False, opponent_confirmed=False,
                                 creator=creator)
         prediction.save()
@@ -93,6 +94,8 @@ class PredictionForm(forms.Form):
         show_prediction_confirmation = kwargs.pop('show_prediction_confirmation')
         show_names = kwargs.pop('show_names')
         show_subscribe = kwargs.pop('show_subscribe')
+        show_delete = kwargs.pop('show_delete')
+        pid = kwargs.pop('pid')
         super(PredictionForm, self).__init__(*args, **kwargs)
         self.fields['prediction_title'].widget.attrs['readonly'] = not details_editable
         self.fields['prediction_text'].widget.attrs['readonly'] = not details_editable
@@ -103,6 +106,7 @@ class PredictionForm(forms.Form):
         self.fields['witness_confirmed'].widget.attrs['readonly'] = show_witness_confirmation
         self.fields['opponent_confirmed'].widget.attrs['readonly'] = show_opponent_confirmation
         self.fields['prediction_occurred'].widget.attrs['readonly'] = show_prediction_confirmation
+        self.fields['pid'].widget.attrs['readonly'] = pid
 
     prediction_title = forms.CharField()
     prediction_text = forms.CharField(widget=forms.Textarea)
@@ -114,3 +118,4 @@ class PredictionForm(forms.Form):
     opponent_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO)
     prediction_occurred = forms.TypedChoiceField(choices=CHOICES_THINKING_YES_NO)
     subscribed = forms.TypedChoiceField(choices=CHOICES_YES_NO)
+    pid = forms.IntegerField(widget=forms.HiddenInput())

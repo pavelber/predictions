@@ -1,10 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
-from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.generic import ListView, TemplateView
-from django.views.generic.edit import UpdateView, DeleteView, FormView
+from django.views.generic import TemplateView
+from django.views.generic.edit import DeleteView, FormView
 
 from predict.forms import NewPredictionForm, ConfirmPredictionForm, PredictionForm
 from predict.models import Prediction, PredictionWithRole
@@ -17,7 +16,7 @@ class MyPredictionList(LoginRequiredMixin, TemplateView):
         # <view logic>
         return render(request, self.template_name,
                       {'predictions': self.get_predictions(),
-                       "title":"My Predictions"})
+                       "title": "My Predictions"})
 
     def get_predictions(self):
         current_user = self.request.user
@@ -99,10 +98,11 @@ class PredictionView(LoginRequiredMixin, FormView):
         show_prediction_confirmation = is_witness
         show_names = is_witness or is_opponent or is_creator
         show_subscribe = not (is_witness or is_opponent or is_creator)
+        show_delete = details_editable
         details = {'details_editable': details_editable, 'show_witness_confirmation': show_witness_confirmation,
                    'show_opponent_confirmation': show_opponent_confirmation,
                    'show_prediction_confirmation': show_prediction_confirmation, 'show_names': show_names,
-                   'show_subscribe': show_subscribe}
+                   'show_subscribe': show_subscribe, 'show_delete': show_delete, 'pid':prediction.id}
         return details
 
     def get_prediction(self):
