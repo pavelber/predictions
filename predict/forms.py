@@ -126,13 +126,15 @@ class PredictionForm(forms.Form):
                 prediction.save()
                 prediction.send_opponent_changed_decision_email(opponent_confirmed)
         else:
-            subscribed = self.cleaned_data['subscribed']
+            subscribed = self.cleaned_data['subscribed'] == "True"
+            subscriber = Predictor.objects.get(email=current_user.email)
+
             if not subscribed:
-                prediction.observers.remove(current_user)
+                prediction.observers.remove(subscriber)
             else:
-                prediction.observers.add(current_user)
+                prediction.observers.add(subscriber)
             prediction.save()
-            current_user.send_observer_email(prediction, subscribed)
+            subscriber.send_observer_email(prediction, subscribed)
 
 
 def get_or_create_user(email):

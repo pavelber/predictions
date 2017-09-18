@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.edit import DeleteView, FormView
 
-from predict.forms import  PredictionForm
+from predict.forms import PredictionForm
 from predict.models import Prediction, PredictionWithRole
 
 
@@ -21,7 +21,8 @@ class MyPredictionList(LoginRequiredMixin, TemplateView):
     def get_predictions(self):
         current_user = self.request.user
         predictions = Prediction.objects.filter(
-            Q(creator=current_user) | Q(witness=current_user) | Q(opponent=current_user)).order_by('-date')
+            Q(creator=current_user) | Q(witness=current_user) | Q(opponent=current_user) |
+            Q(observers__email=current_user.email)).order_by('-date')
         role_predictions = map(lambda p: PredictionWithRole(p, get_role(p, current_user)), predictions)
         return list(role_predictions)
 
@@ -65,6 +66,7 @@ class PredictionView(LoginRequiredMixin, FormView):
 
     def get_initial(self):
         initial = super(PredictionView, self).get_initial()
+        current_user = self.request.user
         if self.request.method == "GET":
             prediction = self.get_prediction()
             initial['prediction_title'] = prediction.title
@@ -76,6 +78,7 @@ class PredictionView(LoginRequiredMixin, FormView):
             initial['opponent_confirmed'] = prediction.opponent_confirmed
             initial['prediction_occurred'] = prediction.prediction_occurred
             initial['creator_name'] = prediction.creator.email
+            initial['subscribed'] = current_user in prediction.observers.all()
             initial['pid'] = prediction.id
         return initial
 
@@ -104,7 +107,7 @@ class PredictionView(LoginRequiredMixin, FormView):
         details = {'details_editable': details_editable, 'show_witness_confirmation': show_witness_confirmation,
                    'show_opponent_confirmation': show_opponent_confirmation,
                    'show_prediction_confirmation': show_prediction_confirmation, 'show_names': show_names,
-                   'show_subscribe': show_subscribe, 'show_delete': show_delete, 'pid':prediction.id}
+                   'show_subscribe': show_subscribe, 'show_delete': show_delete, 'pid': prediction.id}
         return details
 
     def get_prediction(self):
