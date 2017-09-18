@@ -22,7 +22,7 @@ class Predictor(User):
         send_email("You are invited participate in prediction",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_invitation.html',
                    {'creator': self.fullname(),
-                    'link': config('SITE_URL') + reverse('prediction_confirm', kwargs={'pk': prediction.id}),
+                    'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
                     'role': role,
                     'new_user': is_new_user
                     })

@@ -1,4 +1,6 @@
-<h1>{{ title }} </h1>
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
 <ul>
     {% for role_prediction in predictions %}
     <li>
@@ -11,3 +13,4 @@
 <a href="{% url "prediction_list" %}">All Predictions</a> <br/>
 <a href="{% url "my_prediction_list" %}">My Predictions</a>  <br/><br/>
 <a href="{% url "prediction_new" %}">Create New Prediction</a>
+{% endblock %}

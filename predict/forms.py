@@ -16,33 +16,6 @@ CHOICES_THINKING_YES_NO = (
     (False, 'No')
 )
 
-
-class ConfirmPredictionForm(forms.Form):
-    agree = forms.TypedChoiceField(
-        choices=CHOICES_YES_NO,
-        label="Agree to participate",
-        required=True)
-    pk = forms.IntegerField(widget=HiddenInput)
-
-    def save_confirmation(self, user):
-
-        prediction_id = self.cleaned_data['pk']
-        prediction = Prediction.objects.get(pk=prediction_id)
-
-        confirmed = self.cleaned_data['agree']
-
-        if prediction.witness == user:
-            prediction.witness_confirmed = confirmed
-            role = "witness"
-        elif prediction.opponent == user:
-            prediction.opponent_confirmed = confirmed
-            role = "opponent"
-        else:
-            raise Exception('Unknown user in prediction confirmation')
-        prediction.save()
-        prediction.send_confirmation_email(role, confirmed)
-
-
 class NewPredictionForm(forms.Form):
     prediction_title = forms.CharField(label='Prediction Title')
     prediction_text = forms.CharField(widget=forms.Textarea, label='Your Prediction')

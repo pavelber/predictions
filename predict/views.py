@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.edit import DeleteView, FormView
 
-from predict.forms import NewPredictionForm, ConfirmPredictionForm, PredictionForm
+from predict.forms import NewPredictionForm,  PredictionForm
 from predict.models import Prediction, PredictionWithRole
 
 
@@ -127,45 +127,6 @@ class PredictionView(LoginRequiredMixin, FormView):
 
     def form_invalid(self, form):
         return super().form_invalid(form)
-
-
-class PredictionConfirm(LoginRequiredMixin, FormView):
-    template_name = 'confirm.html'
-    form_class = ConfirmPredictionForm
-    success_url = reverse_lazy('my_prediction_list')
-
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
-    def form_invalid(self, form):
-        print(form.errors)
-        return super().form_invalid(form)
-
-    def get_form_kwargs(self):
-        kwargs = super(PredictionConfirm, self).get_form_kwargs()
-        if self.request.method == "GET":
-            kwargs['initial']['pk'] = self.kwargs['pk']
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        """Use this to add extra context."""
-        context = super(PredictionConfirm, self).get_context_data(**kwargs)
-        current_user = self.request.user
-        if self.request.method == "GET":
-            prediction_id = self.kwargs['pk']
-            prediction = Prediction.objects.get(pk=prediction_id)
-            context['text'] = prediction.text
-            context['date'] = prediction.date
-            context['role'] = prediction.get_role(current_user)
-        return context
-
-    def form_valid(self, form):
-        current_user = self.request.user
-        form.save_confirmation(current_user)
-        return super(PredictionConfirm, self).form_valid(form)
 
 
 def get_role(p, current_user):
