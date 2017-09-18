@@ -16,12 +16,44 @@ CHOICES_THINKING_YES_NO = (
     (False, 'No')
 )
 
-class NewPredictionForm(forms.Form):
-    prediction_title = forms.CharField(label='Prediction Title')
-    prediction_text = forms.CharField(widget=forms.Textarea, label='Your Prediction')
-    prediction_date = forms.DateField(widget=forms.SelectDateWidget, label='Date of predicted event')
-    witness_email = forms.EmailField(label='Witness email', required=True)
-    opponent_email = forms.EmailField(label='Opponent email', required=True)
+
+class PredictionForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        method = kwargs.pop('request_method')
+
+        if method == "GET":
+            details_editable = kwargs.pop('details_editable',  True)
+            show_witness_confirmation = kwargs.pop('show_witness_confirmation', False)
+            show_opponent_confirmation = kwargs.pop('show_opponent_confirmation',False)
+            show_prediction_confirmation = kwargs.pop('show_prediction_confirmation', False)
+            show_names = kwargs.pop('show_names',True)
+            show_subscribe = kwargs.pop('show_subscribe', False)
+            show_delete = kwargs.pop('show_delete', False)
+            pid = kwargs.pop('pid',None)
+        super(PredictionForm, self).__init__(*args, **kwargs)
+        if method == "GET":
+            self.fields['prediction_title'].widget.attrs['readonly'] = not details_editable
+            self.fields['prediction_text'].widget.attrs['readonly'] = not details_editable
+            self.fields['prediction_date'].widget.attrs['readonly'] = not details_editable
+            self.fields['creator_name'].widget.attrs['readonly'] = True
+            self.fields['witness_email'].widget.attrs['readonly'] = not details_editable
+            self.fields['opponent_email'].widget.attrs['readonly'] = not details_editable
+            self.fields['witness_confirmed'].widget.attrs['readonly'] = show_witness_confirmation
+            self.fields['opponent_confirmed'].widget.attrs['readonly'] = show_opponent_confirmation
+            self.fields['prediction_occurred'].widget.attrs['readonly'] = show_prediction_confirmation
+            self.fields['pid'].widget.attrs['readonly'] = True
+
+    prediction_title = forms.CharField()
+    prediction_text = forms.CharField(widget=forms.Textarea)
+    prediction_date = forms.DateField(widget=forms.SelectDateWidget)
+    creator_name = forms.CharField(required=False)
+    witness_email = forms.EmailField(required=False)
+    opponent_email = forms.EmailField(required=False)
+    witness_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO,required=False)
+    opponent_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO,required=False)
+    prediction_occurred = forms.TypedChoiceField(choices=CHOICES_THINKING_YES_NO,required=False)
+    subscribed = forms.TypedChoiceField(choices=CHOICES_YES_NO,required=False)
+    pid = forms.IntegerField(widget=forms.HiddenInput(),required=False)
 
     def clean_prediction_date(self):
         prediction_date = self.cleaned_data['prediction_date']
@@ -46,46 +78,7 @@ class NewPredictionForm(forms.Form):
         opponent.send_invitation_email(prediction,  "opponent", is_new_opponent)
         prediction.send_creator_email()
 
-
-class PredictionForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        method = kwargs.pop('request_method')
-
-        if method == "GET":
-            details_editable = kwargs.pop('details_editable')
-            show_witness_confirmation = kwargs.pop('show_witness_confirmation')
-            show_opponent_confirmation = kwargs.pop('show_opponent_confirmation')
-            show_prediction_confirmation = kwargs.pop('show_prediction_confirmation')
-            show_names = kwargs.pop('show_names')
-            show_subscribe = kwargs.pop('show_subscribe')
-            show_delete = kwargs.pop('show_delete')
-            pid = kwargs.pop('pid')
-        super(PredictionForm, self).__init__(*args, **kwargs)
-        if method == "GET":
-            self.fields['prediction_title'].widget.attrs['readonly'] = not details_editable
-            self.fields['prediction_text'].widget.attrs['readonly'] = not details_editable
-            self.fields['prediction_date'].widget.attrs['readonly'] = not details_editable
-            self.fields['creator_name'].widget.attrs['readonly'] = True
-            self.fields['witness_email'].widget.attrs['readonly'] = not details_editable
-            self.fields['opponent_email'].widget.attrs['readonly'] = not details_editable
-            self.fields['witness_confirmed'].widget.attrs['readonly'] = show_witness_confirmation
-            self.fields['opponent_confirmed'].widget.attrs['readonly'] = show_opponent_confirmation
-            self.fields['prediction_occurred'].widget.attrs['readonly'] = show_prediction_confirmation
-            self.fields['pid'].widget.attrs['readonly'] = True
-
-    prediction_title = forms.CharField()
-    prediction_text = forms.CharField(widget=forms.Textarea)
-    prediction_date = forms.DateField(widget=forms.SelectDateWidget)
-    creator_name = forms.CharField()
-    witness_email = forms.EmailField(required=False)
-    opponent_email = forms.EmailField(required=False)
-    witness_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO,required=False)
-    opponent_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO,required=False)
-    prediction_occurred = forms.TypedChoiceField(choices=CHOICES_THINKING_YES_NO,required=False)
-    subscribed = forms.TypedChoiceField(choices=CHOICES_YES_NO,required=False)
-    pid = forms.IntegerField(widget=forms.HiddenInput())
-
-    def upfate_prediction(self, current_user):
+    def update_prediction(self, current_user):
         prediction = Prediction.objects.get(id=self.cleaned_data['pid'])
         if current_user == prediction.creator:
             prediction_title = self.cleaned_data['prediction_title']

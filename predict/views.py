@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.edit import DeleteView, FormView
 
-from predict.forms import NewPredictionForm,  PredictionForm
+from predict.forms import  PredictionForm
 from predict.models import Prediction, PredictionWithRole
 
 
@@ -48,14 +48,14 @@ class PredictionDelete(LoginRequiredMixin, DeleteView):
 
 
 class PredictionNew(LoginRequiredMixin, FormView):
-    template_name = 'new.html'
-    form_class = NewPredictionForm
+    template_name = 'prediction.html'
+    form_class = PredictionForm
     success_url = reverse_lazy('my_prediction_list')
 
-    def form_valid(self, form):
-        current_user = self.request.user
-        form.create_prediction(current_user)
-        return super(PredictionNew, self).form_valid(form)
+    def get_form_kwargs(self):
+        kw = super(PredictionNew, self).get_form_kwargs()
+        kw['request_method'] = self.request.method
+        return kw
 
 
 class PredictionView(LoginRequiredMixin, FormView):
@@ -122,7 +122,10 @@ class PredictionView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         current_user = self.request.user
-        form.upfate_prediction(current_user)
+        if form.cleaned_data['pid']:
+            form.update_prediction(current_user)
+        else:
+            form.create_prediction(current_user)
         return super(PredictionView, self).form_valid(form)
 
     def form_invalid(self, form):
