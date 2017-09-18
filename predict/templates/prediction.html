@@ -1,7 +1,10 @@
-<form action="/update" method="post">
+<form action="/prediction" method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
     <div class="fieldWrapper">
+        {{ form.pid }}
+    </div>
+     <div class="fieldWrapper">
         {{ form.prediction_title.errors }}
         <label for="{{ form.prediction_title.id_for_label }}">Title:</label>
         {{ form.prediction_title }}
@@ -64,7 +67,20 @@
     {% endif %}
     <input type="submit" value="Submit"/>
 
-
+{% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>{{ field.name }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
 </form>
 
 {% if show_delete %}

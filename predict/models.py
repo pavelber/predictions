@@ -18,26 +18,35 @@ class Predictor(User):
             name = self.email
         return name
 
-    def send_invitation_email(self, creator, role, is_new_user):
+    def send_invitation_email(self, prediction, role, is_new_user):
         send_email("You are invited participate in prediction",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_invitation.html',
                    {'creator': self.fullname(),
-                    'link': config('SITE_URL') + reverse('prediction_confirm', kwargs={'pk': self.id}),
+                    'link': config('SITE_URL') + reverse('prediction_confirm', kwargs={'pk': prediction.id}),
                     'role': role,
                     'new_user': is_new_user
                     })
 
-    def send_before_email(self):
+    def send_before_email(self, prediction):
         send_email("Prediction: one week to decision",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_before.html',
-                   {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk':  self.id})})
+                   {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk':  prediction.id})})
 
-    def send_after_reminder_email(self):
+    def send_after_reminder_email(self, prediction):
         send_email("Prediction: decision was not made!",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_after.html',
                    {'creator': self.fullname(),
-                    'link': config('SITE_URL') + reverse('prediction', kwargs={'pk':  self.id})
+                    'link': config('SITE_URL') + reverse('prediction', kwargs={'pk':  prediction.id})
                     })
+
+    def send_observer_email(self, prediction, subscribed):
+        pass
+
+    def send_other_changed_email(self, role, prediction):
+        pass
+
+    def send_you_removed_as_email(self, role):
+        pass
 
 
 class Prediction(models.Model):
@@ -83,6 +92,15 @@ class Prediction(models.Model):
         send_email("Prediction: It's time to decide",
                    config('DEFAULT_FROM_EMAIL'), self.witness.email, 'email_time_to_decide.html',
                    {'link': config('SITE_URL') + reverse('my_prediction_list')})
+
+    def send_opponent_changed_decision_email(self, opponent_confirmed):
+        pass
+
+    def send_witness_changed_decision_email(self, witness_confirmed):
+        pass
+
+    def send_email_details_updated(self):
+        pass
 
 
 class PredictionWithRole:

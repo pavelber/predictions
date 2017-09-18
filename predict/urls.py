@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^new$', views.PredictionNew.as_view(), name='prediction_new'),
     url(r'^confirm/(?P<pk>\d+)$', views.PredictionConfirm.as_view(), name='prediction_confirm'),
     url(r'^prediction/(?P<pk>\d+)$', views.PredictionView.as_view(), name='prediction'),
+    url(r'^prediction$', views.PredictionView.as_view(), name='prediction'),
     url(r'^confirm', views.PredictionConfirm.as_view(), name='prediction_confirm'),
     url(r'^delete/(?P<pk>\d+)$', views.PredictionDelete.as_view(), name='prediction_delete'),
     url(r'^accounts/login/$', auth_views.login, name='login'),

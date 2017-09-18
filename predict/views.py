@@ -65,16 +65,18 @@ class PredictionView(LoginRequiredMixin, FormView):
 
     def get_initial(self):
         initial = super(PredictionView, self).get_initial()
-        prediction = self.get_prediction()
-        initial['prediction_title'] = prediction.title
-        initial['prediction_text'] = prediction.text
-        initial['prediction_date'] = prediction.date
-        initial['witness_email'] = prediction.witness.fullname()
-        initial['opponent_email'] = prediction.opponent.fullname()
-        initial['witness_confirmed'] = prediction.witness_confirmed
-        initial['opponent_confirmed'] = prediction.opponent_confirmed
-        initial['prediction_occurred'] = prediction.prediction_occurred
-        initial['creator_name'] = prediction.creator.fullname()
+        if self.request.method == "GET":
+            prediction = self.get_prediction()
+            initial['prediction_title'] = prediction.title
+            initial['prediction_text'] = prediction.text
+            initial['prediction_date'] = prediction.date
+            initial['witness_email'] = prediction.witness.email
+            initial['opponent_email'] = prediction.opponent.email
+            initial['witness_confirmed'] = prediction.witness_confirmed
+            initial['opponent_confirmed'] = prediction.opponent_confirmed
+            initial['prediction_occurred'] = prediction.prediction_occurred
+            initial['creator_name'] = prediction.creator.email
+            initial['pid'] = prediction.id
         return initial
 
     def get_context_data(self, **kwargs):
@@ -110,8 +112,21 @@ class PredictionView(LoginRequiredMixin, FormView):
 
     def get_form_kwargs(self):
         kw = super(PredictionView, self).get_form_kwargs()
-        kw.update(self.get_details_dict())
+        kw['request_method'] = self.request.method
+        if self.request.method == "GET":
+            kw.update(self.get_details_dict())
         return kw
+
+    def get_success_url(self):
+        return super().get_success_url()
+
+    def form_valid(self, form):
+        current_user = self.request.user
+        form.upfate_prediction(current_user)
+        return super(PredictionView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
 
 
 class PredictionConfirm(LoginRequiredMixin, FormView):
