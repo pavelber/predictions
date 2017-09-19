@@ -1,7 +1,8 @@
 from datetime import date, timedelta
 
 from django import forms
-from django.forms import HiddenInput
+from datetimewidget.widgets import DateWidget
+from django.forms import DateInput
 
 from predict.models import Prediction, Predictor
 
@@ -18,6 +19,7 @@ CHOICES_THINKING_YES_NO = (
 
 
 class PredictionForm(forms.Form):
+
     def __init__(self, *args, **kwargs):
         method = kwargs.pop('request_method')
 
@@ -34,7 +36,12 @@ class PredictionForm(forms.Form):
         if method == "GET":
             self.fields['prediction_title'].widget.attrs['readonly'] = not details_editable
             self.fields['prediction_text'].widget.attrs['readonly'] = not details_editable
-            self.fields['prediction_date'].widget.attrs['readonly'] = not details_editable
+            if details_editable:
+                #self.fields['prediction_date'].widget = DateWidget
+                pass
+            else:
+                self.fields['prediction_date'].widget = DateInput()
+                self.fields['prediction_date'].widget.attrs['readonly'] = True
             self.fields['creator_name'].widget.attrs['readonly'] = True
             self.fields['witness_email'].widget.attrs['readonly'] = not details_editable
             self.fields['opponent_email'].widget.attrs['readonly'] = not details_editable
@@ -45,7 +52,7 @@ class PredictionForm(forms.Form):
 
     prediction_title = forms.CharField()
     prediction_text = forms.CharField(widget=forms.Textarea)
-    prediction_date = forms.DateField(widget=forms.SelectDateWidget)
+    prediction_date = forms.DateField(widget=DateWidget)
     creator_name = forms.CharField(required=False)
     witness_email = forms.EmailField(required=False)
     opponent_email = forms.EmailField(required=False)

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Edit/view prediction{% endblock %}
+{% block head %}{{ form.media }}{% endblock %}
 {% block content %}
 <form action="/prediction" method="post">
     {% csrf_token %}
