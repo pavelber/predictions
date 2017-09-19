@@ -52,7 +52,7 @@ class Predictor(User):
 class Prediction(models.Model):
     title = models.TextField(default='No Title')
     text = models.TextField()
-    date = models.DateTimeField()
+    date = models.DateField()
     creator = models.ForeignKey(Predictor, related_name="creator")
     opponent = models.ForeignKey(Predictor, related_name="opponent")
     witness = models.ForeignKey(Predictor, related_name="witness")
