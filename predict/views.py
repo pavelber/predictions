@@ -58,6 +58,18 @@ class PredictionNew(LoginRequiredMixin, FormView):
         kw['request_method'] = self.request.method
         return kw
 
+    def get_context_data(self, **kwargs):
+        """Use this to add extra context."""
+        context = super(PredictionNew, self).get_context_data(**kwargs)
+        if self.request.method == "GET":
+            details = self.get_details_dict()
+            context.update(details)
+        return context
+
+    def get_details_dict(self):
+        details = {'show_names': True, 'new_form': True};
+        return details
+
 
 class PredictionView(LoginRequiredMixin, FormView):
     template_name = 'prediction.html'
