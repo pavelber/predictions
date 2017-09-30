@@ -1,0 +1,11 @@
+1. Prediction created => email to creator, witness, opponent
+2. Witness or creator approved approval => email to creator, witness, opponent
+3. Witness confirmed that prediction realized/not realized => email to creator, witness, opponent AND OBSERVER
+4. One week before date and still not solved => email to creator, witness, opponent
+5. Date approached and still not solved => email to creator, witness, opponent
+6. One week after the date and still not solved => email to creator, witness, opponent
+
+
+Simplifications:
+1. No text, title, date, witness, opponent change after creation
+2. No removal of approval or evet confirmation

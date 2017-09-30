@@ -70,7 +70,7 @@ class PredictionBase(LoginRequiredMixin, FormView):
 class PredictionNew(PredictionBase):
 
     def get_details_dict(self):
-        details = {'show_names': True, 'new_form': True};
+        details = {'show_names': True, 'new_form': True}
         return details
 
     def get_initial(self):
