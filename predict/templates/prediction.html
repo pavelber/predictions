@@ -23,14 +23,11 @@
         {{ form.prediction_date }}
     </div>
     {% if show_names %}
-        {% if new_form %}
-        {% else %}
-            <div class="fieldWrapper">
-                {{ form.creator_name.errors }}
-                <label for="{{ form.creator_name.id_for_label }}">Creator:</label>
-                {{ form.creator_name }}
-            </div>
-        {% endif %}
+        <div class="fieldWrapper">
+            {{ form.creator_name.errors }}
+            <label for="{{ form.creator_name.id_for_label }}">Creator:</label>
+            {{ form.creator_name }}
+        </div>
         <div class="fieldWrapper">
             {{ form.witness_email.errors }}
             <label for="{{ form.witness_email.id_for_label }}">Witness:</label>
