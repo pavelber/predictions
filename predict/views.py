@@ -47,34 +47,40 @@ class PredictionDelete(LoginRequiredMixin, DeleteView):
     model = Prediction
     success_url = reverse_lazy('prediction_list')
 
-
-class PredictionNew(LoginRequiredMixin, FormView):
+class PredictionBase(LoginRequiredMixin, FormView):
     template_name = 'prediction.html'
     form_class = PredictionForm
     success_url = reverse_lazy('my_prediction_list')
 
     def get_form_kwargs(self):
-        kw = super(PredictionNew, self).get_form_kwargs()
+        kw = super(PredictionBase, self).get_form_kwargs()
         kw['request_method'] = self.request.method
         return kw
 
     def get_context_data(self, **kwargs):
         """Use this to add extra context."""
-        context = super(PredictionNew, self).get_context_data(**kwargs)
+        context = super(PredictionBase, self).get_context_data(**kwargs)
         if self.request.method == "GET":
             details = self.get_details_dict()
             context.update(details)
+        elif self.request.method == "POST":
+            context.update({'show_names': True})
         return context
+
+class PredictionNew(PredictionBase):
 
     def get_details_dict(self):
         details = {'show_names': True, 'new_form': True};
         return details
 
+    def get_initial(self):
+        initial = super(PredictionNew, self).get_initial()
+        current_user = self.request.user
+        if self.request.method == "GET":
+            initial['creator_name'] = current_user.email
+        return initial
 
-class PredictionView(LoginRequiredMixin, FormView):
-    template_name = 'prediction.html'
-    form_class = PredictionForm
-    success_url = reverse_lazy('my_prediction_list')
+class PredictionView(PredictionBase):
 
     def get_initial(self):
         initial = super(PredictionView, self).get_initial()
@@ -93,14 +99,6 @@ class PredictionView(LoginRequiredMixin, FormView):
             initial['subscribed'] = current_user in prediction.observers.all()
             initial['pid'] = prediction.id
         return initial
-
-    def get_context_data(self, **kwargs):
-        """Use this to add extra context."""
-        context = super(PredictionView, self).get_context_data(**kwargs)
-        if self.request.method == "GET":
-            details = self.get_details_dict()
-            context.update(details)
-        return context
 
     def get_details_dict(self):
         current_user = self.request.user
@@ -124,13 +122,6 @@ class PredictionView(LoginRequiredMixin, FormView):
 
     def get_prediction(self):
         return Prediction.objects.get(id=self.kwargs['pk'])
-
-    def get_form_kwargs(self):
-        kw = super(PredictionView, self).get_form_kwargs()
-        kw['request_method'] = self.request.method
-        if self.request.method == "GET":
-            kw.update(self.get_details_dict())
-        return kw
 
     def get_success_url(self):
         return super().get_success_url()
