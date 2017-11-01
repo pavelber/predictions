@@ -47,6 +47,7 @@ class PredictionDelete(LoginRequiredMixin, DeleteView):
     model = Prediction
     success_url = reverse_lazy('prediction_list')
 
+
 class PredictionBase(LoginRequiredMixin, FormView):
     template_name = 'prediction.html'
     form_class = PredictionForm
@@ -55,6 +56,7 @@ class PredictionBase(LoginRequiredMixin, FormView):
     def get_form_kwargs(self):
         kw = super(PredictionBase, self).get_form_kwargs()
         kw['request_method'] = self.request.method
+        kw.update(self.get_details_dict())
         return kw
 
     def get_context_data(self, **kwargs):
@@ -64,13 +66,16 @@ class PredictionBase(LoginRequiredMixin, FormView):
             details = self.get_details_dict()
             context.update(details)
         elif self.request.method == "POST":
+            details = self.get_details_dict()
+            context.update(details)
             context.update({'show_names': True})
         return context
 
-class PredictionNew(PredictionBase):
 
+class PredictionNew(PredictionBase):
     def get_details_dict(self):
-        details = {'show_names': True, 'new_form': True}
+        details = {'show_names': True, 'new_form': True, 'details_editable': True,
+                   "show_submit": True, "show_delete": False}
         return details
 
     def get_initial(self):
@@ -80,8 +85,8 @@ class PredictionNew(PredictionBase):
             initial['creator_name'] = current_user.email
         return initial
 
-class PredictionView(PredictionBase):
 
+class PredictionView(PredictionBase):
     def get_initial(self):
         initial = super(PredictionView, self).get_initial()
         current_user = self.request.user
@@ -107,17 +112,19 @@ class PredictionView(PredictionBase):
         is_witness = current_user == prediction.witness
         is_opponent = current_user == prediction.opponent
 
-        details_editable = is_creator
+        details_editable = False
+        show_submit = is_witness or is_opponent
         show_witness_confirmation = is_witness
         show_opponent_confirmation = is_opponent
         show_prediction_confirmation = is_witness
         show_names = is_witness or is_opponent or is_creator
         show_subscribe = not (is_witness or is_opponent or is_creator)
-        show_delete = details_editable
+        show_delete = is_creator
         details = {'details_editable': details_editable, 'show_witness_confirmation': show_witness_confirmation,
                    'show_opponent_confirmation': show_opponent_confirmation,
                    'show_prediction_confirmation': show_prediction_confirmation, 'show_names': show_names,
-                   'show_subscribe': show_subscribe, 'show_delete': show_delete, 'pid': prediction.id}
+                   'show_subscribe': show_subscribe, 'show_delete': show_delete, 'pid': prediction.id,
+                   'show_submit': show_submit}
         return details
 
     def get_prediction(self):

@@ -1,8 +1,7 @@
 from datetime import date, timedelta
 
-from django import forms
 from datetimewidget.widgets import DateWidget
-from django.forms import DateInput
+from django import forms
 
 from predict.models import Prediction, Predictor
 
@@ -19,29 +18,27 @@ CHOICES_THINKING_YES_NO = (
 
 
 class PredictionForm(forms.Form):
-
     def __init__(self, *args, **kwargs):
         method = kwargs.pop('request_method')
 
-        if method == "GET":
-            details_editable = kwargs.pop('details_editable',  True)
-            show_witness_confirmation = kwargs.pop('show_witness_confirmation', False)
-            show_opponent_confirmation = kwargs.pop('show_opponent_confirmation',False)
-            show_prediction_confirmation = kwargs.pop('show_prediction_confirmation', False)
-            show_names = kwargs.pop('show_names',True)
-            show_subscribe = kwargs.pop('show_subscribe', False)
-            show_delete = kwargs.pop('show_delete', False)
-            pid = kwargs.pop('pid',None)
+        # if method == "GET":
+        details_editable = kwargs.pop('details_editable', True)
+        show_witness_confirmation = kwargs.pop('show_witness_confirmation', False)
+        show_opponent_confirmation = kwargs.pop('show_opponent_confirmation', False)
+        show_prediction_confirmation = kwargs.pop('show_prediction_confirmation', False)
+        show_names = kwargs.pop('show_names', True)
+        show_subscribe = kwargs.pop('show_subscribe', False)
+        show_delete = kwargs.pop('show_delete', False)
+        show_submit = kwargs.pop('show_submit', False)
+        new_form = kwargs.pop('new_form', False)
+        pid = kwargs.pop('pid', None)
         super(PredictionForm, self).__init__(*args, **kwargs)
         if method == "GET":
             self.fields['prediction_title'].widget.attrs['readonly'] = not details_editable
             self.fields['prediction_text'].widget.attrs['readonly'] = not details_editable
-            if details_editable:
-                #self.fields['prediction_date'].widget = DateWidget
-                pass
-            else:
-                self.fields['prediction_date'].widget = DateInput()
+            if not details_editable:
                 self.fields['prediction_date'].widget.attrs['readonly'] = True
+
             self.fields['creator_name'].widget.attrs['readonly'] = True
             self.fields['witness_email'].widget.attrs['readonly'] = not details_editable
             self.fields['opponent_email'].widget.attrs['readonly'] = not details_editable
@@ -52,19 +49,25 @@ class PredictionForm(forms.Form):
 
     prediction_title = forms.CharField()
     prediction_text = forms.CharField(widget=forms.Textarea)
-    prediction_date = forms.DateField(widget=DateWidget)
+    one_week = date.today() + timedelta(days=7)
+    dateTimeOptions = {
+        'format': 'dd MM, yyyy',
+        #  'startDate':
+        'autoclose': True
+    }
+    prediction_date = forms.DateField(widget=DateWidget(options=dateTimeOptions), input_formats=['%d %B, %Y'])
+    # prediction_date = forms.DateField()
     creator_name = forms.CharField(required=False)
     witness_email = forms.EmailField(required=False)
     opponent_email = forms.EmailField(required=False)
-    witness_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO,required=False)
-    opponent_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO,required=False)
-    prediction_occurred = forms.TypedChoiceField(choices=CHOICES_THINKING_YES_NO,required=False)
-    subscribed = forms.TypedChoiceField(choices=CHOICES_YES_NO,required=False)
-    pid = forms.IntegerField(widget=forms.HiddenInput(),required=False)
+    witness_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO, required=False)
+    opponent_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO, required=False)
+    prediction_occurred = forms.TypedChoiceField(choices=CHOICES_THINKING_YES_NO, required=False)
+    subscribed = forms.TypedChoiceField(choices=CHOICES_YES_NO, required=False)
+    pid = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 
     def clean_prediction_date(self):
         prediction_date = self.cleaned_data['prediction_date']
-        print(type(prediction_date))
         if prediction_date < date.today() + timedelta(days=7):
             raise forms.ValidationError("Date should be in a week or more from now!")
         return prediction_date
@@ -82,7 +85,7 @@ class PredictionForm(forms.Form):
                                 creator=creator)
         prediction.save()
         witness.send_invitation_email(prediction, "witness", is_new_witness)
-        opponent.send_invitation_email(prediction,  "opponent", is_new_opponent)
+        opponent.send_invitation_email(prediction, "opponent", is_new_opponent)
         prediction.send_creator_email()
 
     def update_prediction(self, current_user):

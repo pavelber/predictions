@@ -1,4 +1,4 @@
 Django==1.11.4
 social-auth-app-django==1.2.0
 urllib3==1.22
-django-datetime-widget=0.9.3
+https://github.com/pavelber/django-datetime-widget/archive/master.zip

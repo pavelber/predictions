@@ -2,79 +2,81 @@
 {% block title %}Edit/view prediction{% endblock %}
 {% block head %}{{ form.media }}{% endblock %}
 {% block content %}
-<form action="/prediction" method="post">
+<form action="/prediction/{{ pid }}" method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
     <div class="fieldWrapper">
         {{ form.pid }}
     </div>
      <div class="fieldWrapper">
-        {{ form.prediction_title.errors }}
+
         <label for="{{ form.prediction_title.id_for_label }}">Title:</label>
         {{ form.prediction_title }}
     </div>
     <div class="fieldWrapper">
-        {{ form.prediction_text.errors }}
+
         <label for="{{ form.prediction_text.id_for_label }}">Text:</label>
         {{ form.prediction_text }}
     </div>
     <div class="fieldWrapper">
-        {{ form.prediction_date.errors }}
+
         <label for="{{ form.prediction_date.id_for_label }}">Date:</label>
         {{ form.prediction_date }}
     </div>
     {% if show_names %}
         <div class="fieldWrapper">
-            {{ form.creator_name.errors }}
+
             <label for="{{ form.creator_name.id_for_label }}">Creator:</label>
             {{ form.creator_name }}
         </div>
         <div class="fieldWrapper">
-            {{ form.witness_email.errors }}
+
             <label for="{{ form.witness_email.id_for_label }}">Witness:</label>
             {{ form.witness_email }}
         </div>
         <div class="fieldWrapper">
-            {{ form.opponent_email.errors }}
+
             <label for="{{ form.opponent_email.id_for_label }}">Opponent:</label>
             {{ form.opponent_email }}
         </div>
     {% endif %}
     {% if show_withess_confirmation %}
         <div class="fieldWrapper">
-            {{ form.witness_confirmed.errors }}
+
             <label for="{{ form.witness_confirmed.id_for_label }}">Confirm participation:</label>
             {{ form.witness_confirmed }}
         </div>
     {% endif %}
     {% if show_opponent_confirmation %}
         <div class="fieldWrapper">
-            {{ form.opponent_confirmed.errors }}
+
             <label for="{{ form.opponent_confirmed.id_for_label }}">Confirm participation:</label>
             {{ form.opponent_confirmed }}
         </div>
     {% endif %}
     {% if show_subscribe %}
         <div class="fieldWrapper">
-            {{ form.subscribed.errors }}
+
             <label for="{{ form.subscribed.id_for_label }}">Subscribe to the prediction notifications?</label>
             {{ form.subscribed }}
         </div>
     {% endif %}
     {% if show_prediction_confirmation %}
         <div class="fieldWrapper">
-            {{ form.prediction_occurred.errors }}
+
             <label for="{{ form.prediction_occurred.id_for_label }}">Was the prediction fulfilled?</label>
             {{ form.prediction_occurred }}
         </div>
     {% endif %}
-    <input type="submit" value="Submit"/>
+    {% if show_submit %}
+        <input type="submit" value="Submit"/>
+    {% endif %}
 
 {% if form.errors %}
     {% for field in form %}
         {% for error in field.errors %}
             <div class="alert alert-danger">
-                <strong>{{ error|escape }}</strong>{{ field.name }}
+                <strong>{{ error|escape }}</strong>
             </div>
         {% endfor %}
     {% endfor %}

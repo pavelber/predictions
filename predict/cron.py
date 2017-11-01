@@ -37,7 +37,7 @@ def check_one_week_before():
 
 
 def check_exact_date():
-    predictions = Prediction.objects.filter(date__gte=today()).filter(date_mail_sent=False).filter(
+    predictions = Prediction.objects.filter(date__lte=today()).filter(date_mail_sent=False).filter(
         prediction_occurred=None)
     for p in predictions:
         p.send_witness_email()
@@ -47,7 +47,7 @@ def check_exact_date():
 
 def check_one_week_after():
     date_in_one_week = today() - check_after
-    predictions = Prediction.objects.filter(date__gte=date_in_one_week).filter(after_mails_sent=False).filter(
+    predictions = Prediction.objects.filter(date__lte=date_in_one_week).filter(after_mails_sent=False).filter(
         date_mail_sent=True).filter(
         prediction_occurred=None)
     for p in predictions:

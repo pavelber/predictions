@@ -8,4 +8,7 @@
 
 Simplifications:
 1. No text, title, date, witness, opponent change after creation
-2. No removal of approval or evet confirmation
+2. No removal of approval or event confirmation
+
+
+Tests: new prediction form invalid
