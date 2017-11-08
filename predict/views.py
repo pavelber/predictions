@@ -1,3 +1,4 @@
+from decouple import config
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
@@ -155,6 +156,11 @@ class PredictionView(PredictionBase):
 
     def form_invalid(self, form):
         return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'site': config('SITE_URL')})
+        return context
 
 
 def get_role(p, current_user):
