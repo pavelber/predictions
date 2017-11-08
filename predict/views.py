@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.views.generic.edit import DeleteView, FormView
 
@@ -9,11 +9,14 @@ from predict.forms import PredictionForm
 from predict.models import Prediction, PredictionWithRole
 
 
-class MyPredictionList(LoginRequiredMixin, TemplateView):
+class MyPredictionList(TemplateView):
     template_name = "predict/prediction_list.html"
 
     def get(self, request, *args, **kwargs):
-        # <view logic>
+        current_user = request.user
+        if not current_user.is_authenticated:
+            return redirect('/all')
+
         return render(request, self.template_name,
                       {'predictions': self.get_predictions(),
                        "title": "My Predictions"})
@@ -27,7 +30,7 @@ class MyPredictionList(LoginRequiredMixin, TemplateView):
         return list(role_predictions)
 
 
-class PredictionList(LoginRequiredMixin, TemplateView):
+class PredictionList(TemplateView):
     template_name = "predict/prediction_list.html"
 
     def get(self, request, *args, **kwargs):
@@ -48,7 +51,7 @@ class PredictionDelete(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('prediction_list')
 
 
-class PredictionBase(LoginRequiredMixin, FormView):
+class PredictionBase(FormView):
     template_name = 'prediction.html'
     form_class = PredictionForm
     success_url = reverse_lazy('my_prediction_list')
@@ -72,7 +75,7 @@ class PredictionBase(LoginRequiredMixin, FormView):
         return context
 
 
-class PredictionNew(PredictionBase):
+class PredictionNew(LoginRequiredMixin, PredictionBase):
     def get_details_dict(self):
         details = {'show_names': True, 'new_form': True, 'details_editable': True,
                    "show_submit": True, "show_delete": False}
@@ -102,11 +105,13 @@ class PredictionView(PredictionBase):
             initial['prediction_occurred'] = prediction.prediction_occurred
             initial['creator_name'] = prediction.creator.email
             initial['subscribed'] = current_user in prediction.observers.all()
+            initial['logged_in'] = current_user.is_authenticated
             initial['pid'] = prediction.id
         return initial
 
     def get_details_dict(self):
         current_user = self.request.user
+        logged_in = current_user.is_authenticated
         prediction = self.get_prediction()
         is_creator = current_user == prediction.creator
         is_witness = current_user == prediction.witness
@@ -120,11 +125,18 @@ class PredictionView(PredictionBase):
         show_names = is_witness or is_opponent or is_creator
         show_subscribe = not (is_witness or is_opponent or is_creator)
         show_delete = is_creator
+
+        witness_confirmed = prediction.witness_confirmed
+        opponent_confirmed = prediction.opponent_confirmed
+        prediction_occurred = prediction.prediction_occurred
         details = {'details_editable': details_editable, 'show_witness_confirmation': show_witness_confirmation,
                    'show_opponent_confirmation': show_opponent_confirmation,
                    'show_prediction_confirmation': show_prediction_confirmation, 'show_names': show_names,
                    'show_subscribe': show_subscribe, 'show_delete': show_delete, 'pid': prediction.id,
-                   'show_submit': show_submit}
+                   'show_submit': show_submit, 'opponent_confirmed': opponent_confirmed,
+                   'prediction_occurred': prediction_occurred, 'witness_confirmed': witness_confirmed,
+                   "logged_in": logged_in}
+
         return details
 
     def get_prediction(self):

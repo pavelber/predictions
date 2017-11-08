@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from predict.cron import check_one_week_before, check_exact_date, check_one_week_after, run_tasks_hourly
 from . import views
@@ -21,6 +22,8 @@ urlpatterns = [
     url(r'^oauth/', include('social_django.urls', namespace='social')),  # <--
     url(r'^admin/', admin.site.urls),
 ]
+
+urlpatterns += staticfiles_urlpatterns()
 
 LOGIN_URL = 'accounts/login'
 LOGOUT_URL = 'logout'

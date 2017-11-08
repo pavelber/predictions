@@ -31,20 +31,22 @@ class PredictionForm(forms.Form):
         show_delete = kwargs.pop('show_delete', False)
         show_submit = kwargs.pop('show_submit', False)
         new_form = kwargs.pop('new_form', False)
+        witness_confirmed = kwargs.pop('witness_confirmed', False)
+        prediction_occurred = kwargs.pop('prediction_occurred', False)
+        opponent_confirmed = kwargs.pop('opponent_confirmed', False)
+        logged_in = kwargs.pop('logged_in', False)
         pid = kwargs.pop('pid', None)
         super(PredictionForm, self).__init__(*args, **kwargs)
         if method == "GET":
             self.fields['prediction_title'].widget.attrs['readonly'] = not details_editable
             self.fields['prediction_text'].widget.attrs['readonly'] = not details_editable
-            if not details_editable:
-                self.fields['prediction_date'].widget.attrs['readonly'] = True
-
+            self.fields['prediction_date'].widget.attrs['readonly'] = not details_editable
             self.fields['creator_name'].widget.attrs['readonly'] = True
             self.fields['witness_email'].widget.attrs['readonly'] = not details_editable
             self.fields['opponent_email'].widget.attrs['readonly'] = not details_editable
-            self.fields['witness_confirmed'].widget.attrs['readonly'] = show_witness_confirmation
-            self.fields['opponent_confirmed'].widget.attrs['readonly'] = show_opponent_confirmation
-            self.fields['prediction_occurred'].widget.attrs['readonly'] = show_prediction_confirmation
+            self.fields['witness_confirmed'].widget.attrs['disabled'] = witness_confirmed
+            self.fields['opponent_confirmed'].widget.attrs['disabled'] = opponent_confirmed
+            self.fields['prediction_occurred'].widget.attrs['disabled'] = prediction_occurred
             self.fields['pid'].widget.attrs['readonly'] = True
 
     prediction_title = forms.CharField()
@@ -52,11 +54,11 @@ class PredictionForm(forms.Form):
     one_week = date.today() + timedelta(days=7)
     dateTimeOptions = {
         'format': 'dd MM, yyyy',
-        #  'startDate':
+        'startDate': (date.today() + timedelta(days=30)).strftime('%d %B, %Y'),
         'autoclose': True
     }
     prediction_date = forms.DateField(widget=DateWidget(options=dateTimeOptions), input_formats=['%d %B, %Y'])
-    # prediction_date = forms.DateField()
+
     creator_name = forms.CharField(required=False)
     witness_email = forms.EmailField(required=False)
     opponent_email = forms.EmailField(required=False)

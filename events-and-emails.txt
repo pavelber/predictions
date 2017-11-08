@@ -11,4 +11,10 @@ Simplifications:
 2. No removal of approval or event confirmation
 
 
+TODO:
+
+Add share button to a single prediction view
+
+
+Remove code dealing with any changes
 Tests: new prediction form invalid
