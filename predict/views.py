@@ -10,17 +10,24 @@ from predict.forms import PredictionForm
 from predict.models import Prediction, PredictionWithRole
 
 
-class MyPredictionList(TemplateView):
+class PredictionListBase(TemplateView):
     template_name = "predict/prediction_list.html"
+    title = ""
 
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name,
+                      {'predictions': self.get_predictions(),
+                       "title": self.title,
+                       "logged_in": self.request.user.is_authenticated})
+
+
+class MyPredictionList(PredictionListBase):
     def get(self, request, *args, **kwargs):
         current_user = request.user
         if not current_user.is_authenticated:
             return redirect('/all')
 
-        return render(request, self.template_name,
-                      {'predictions': self.get_predictions(),
-                       "title": "My Predictions"})
+        return super(MyPredictionList, self).get(request, *args, **kwargs)
 
     def get_predictions(self):
         current_user = self.request.user
@@ -31,14 +38,8 @@ class MyPredictionList(TemplateView):
         return list(role_predictions)
 
 
-class PredictionList(TemplateView):
+class PredictionList(PredictionListBase):
     template_name = "predict/prediction_list.html"
-
-    def get(self, request, *args, **kwargs):
-        # <view logic>
-        return render(request, self.template_name,
-                      {'predictions': self.get_predictions(),
-                       "title": "All Predictions"})
 
     def get_predictions(self):
         current_user = self.request.user
@@ -73,6 +74,7 @@ class PredictionBase(FormView):
             details = self.get_details_dict()
             context.update(details)
             context.update({'show_names': True})
+           # context.update({'logged_in': self.request.user.is_authenticated})
         return context
 
 
@@ -87,7 +89,13 @@ class PredictionNew(LoginRequiredMixin, PredictionBase):
         current_user = self.request.user
         if self.request.method == "GET":
             initial['creator_name'] = current_user.email
+            initial['logged_in'] = current_user.is_authenticated
         return initial
+
+    def form_valid(self, form):
+        current_user = self.request.user
+        form.create_prediction(current_user)
+        return super(PredictionNew, self).form_valid(form)
 
 
 class PredictionView(PredictionBase):
@@ -112,14 +120,16 @@ class PredictionView(PredictionBase):
 
     def get_details_dict(self):
         current_user = self.request.user
-        logged_in = current_user.is_authenticated
+        logged_in = current_user.is_authenticated.value
         prediction = self.get_prediction()
         is_creator = current_user == prediction.creator
         is_witness = current_user == prediction.witness
         is_opponent = current_user == prediction.opponent
 
-        details_editable = False
-        show_submit = is_witness or is_opponent
+        details_editable = not (prediction.witness_confirmed or prediction.opponent_confirmed)
+        show_submit = (is_witness and not prediction.witness_confirmed) \
+                      or (is_opponent and not prediction.opponent_confirmed) \
+                      or (is_creator and details_editable)
         show_witness_confirmation = is_witness
         show_opponent_confirmation = is_opponent
         show_prediction_confirmation = is_witness
@@ -143,24 +153,15 @@ class PredictionView(PredictionBase):
     def get_prediction(self):
         return Prediction.objects.get(id=self.kwargs['pk'])
 
-    def get_success_url(self):
-        return super().get_success_url()
-
-    def form_valid(self, form):
-        current_user = self.request.user
-        if form.cleaned_data['pid']:
-            form.update_prediction(current_user)
-        else:
-            form.create_prediction(current_user)
-        return super(PredictionView, self).form_valid(form)
-
-    def form_invalid(self, form):
-        return super().form_invalid(form)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({'site': config('SITE_URL')})
         return context
+
+    def form_valid(self, form):
+        current_user = self.request.user
+        form.update_prediction(current_user)
+        return super(PredictionView, self).form_valid(form)
 
 
 def get_role(p, current_user):

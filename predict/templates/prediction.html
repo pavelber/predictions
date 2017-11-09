@@ -92,14 +92,23 @@
         <form action="/delete/{{ pid }}" method="post"> {% csrf_token %}<input type="submit" value="Delete"/></form>
     {% endif %}
 
-    {% if not logged_in %}
-        <a href="{% url "login" %}">Login to subscribe for events or to confirm participation in this prediction</a>
+    {% if not new_form %}
+        {% if not logged_in %}
+            <a href="{% url "login" %}">Login to subscribe for events or to confirm participation in this prediction</a>
+        {% endif %}
+
+        <div style="width: 300px">
+            <a id="facebookShareLink"
+               href="https://www.facebook.com/sharer/sharer.php?s=100&p[url]={{ site }}/{{ request.get_full_path }}&p[images][0]=&p[title]={{ form.prediction_title.value }}&p[summary]=Description%20goes%20here!"
+               target="_blank"
+               onclick="window.open(this.href,'targetWindow','toolbar=no,location=0,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=250'); return false">
+                <button style="width:100%; margin-top:10px;" type="button"
+                        class="btn btn-block btn-social btn-facebook"><i class="fa fa-facebook fa-2"></i> Share on
+                    Facebook
+                </button>
+            </a>
+        </div>
     {% endif %}
-
-    <div style="width: 300px">
-
-    <a id="facebookShareLink" href="https://www.facebook.com/sharer/sharer.php?s=100&p[url]={{ site }}&p[images][0]=&p[title]=Title%20Goes%20Here&p[summary]=Description%20goes%20here!" target="_blank" onclick="window.open(this.href,'targetWindow','toolbar=no,location=0,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=250'); return false"><button style="width:100%; margin-top:10px;" type="button" class="btn btn-block btn-social btn-facebook"><i class="fa fa-facebook fa-2"></i> Share on Facebook</button></a>
-    </div>
 
 {% endblock %}
 
