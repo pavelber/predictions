@@ -5,10 +5,10 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.views.generic.edit import DeleteView, FormView
+from django.urls import reverse
 
 from predict.forms import PredictionForm
-from predict.models import Prediction, PredictionWithRole
-
+from predict.models import Prediction, PredictionWithRole, send_email
 
 class PredictionListBase(TemplateView):
     template_name = "predict/prediction_list.html"
@@ -51,7 +51,20 @@ class PredictionList(PredictionListBase):
 class PredictionDelete(LoginRequiredMixin, DeleteView):
     model = Prediction
     success_url = reverse_lazy('prediction_list')
+    """
+    def get_object(self, queryset=None):
+        print("Delete form")
+        obj = super(PredictionDelete, self).get_object(self)
+        return obj
+    """
 
+    def delete(self, request, *args, **kwargs):
+        response = super(PredictionDelete, self).delete(self, request, *args, **kwargs)
+        # print("Delete prediction", type(self.object), self.object, self.object.title, self.object.creator.email)
+        send_email("Prediction deleted",
+                   config('DEFAULT_FROM_EMAIL'), self.object.creator.email, 'email_delete.html',
+                   {'link': config('SITE_URL') + reverse('my_prediction_list'), 'title': self.object.title})
+        return response
 
 class PredictionBase(FormView):
     template_name = 'prediction.html'
