@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 ]
 
-urlpatterns += staticfiles_urlpatterns()
+
 
 LOGIN_URL = 'accounts/login'
 LOGOUT_URL = 'logout'

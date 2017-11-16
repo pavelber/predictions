@@ -51,12 +51,6 @@ class PredictionList(PredictionListBase):
 class PredictionDelete(LoginRequiredMixin, DeleteView):
     model = Prediction
     success_url = reverse_lazy('prediction_list')
-    """
-    def get_object(self, queryset=None):
-        print("Delete form")
-        obj = super(PredictionDelete, self).get_object(self)
-        return obj
-    """
 
     def delete(self, request, *args, **kwargs):
         response = super(PredictionDelete, self).delete(self, request, *args, **kwargs)
@@ -65,6 +59,7 @@ class PredictionDelete(LoginRequiredMixin, DeleteView):
                    config('DEFAULT_FROM_EMAIL'), self.object.creator.email, 'email_delete.html',
                    {'link': config('SITE_URL') + reverse('my_prediction_list'), 'title': self.object.title})
         return response
+
 
 class PredictionBase(FormView):
     template_name = 'prediction.html'
