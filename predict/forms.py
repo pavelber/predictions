@@ -86,8 +86,9 @@ class PredictionForm(forms.Form):
                                 opponent=opponent, witness=witness, witness_confirmed=False, opponent_confirmed=False,
                                 creator=creator)
         prediction.save()
-        witness.send_invitation_email(prediction, "witness", is_new_witness)
-        opponent.send_invitation_email(prediction, "opponent", is_new_opponent)
+        #TODO: move roles names and text to one place
+        witness.send_invitation_email(prediction, "referee", 'to be the referee on his wager about', is_new_witness)
+        opponent.send_invitation_email(prediction, "opponent", 'to bet on', is_new_opponent)
         prediction.send_creator_email()
 
     def update_prediction(self, current_user):
