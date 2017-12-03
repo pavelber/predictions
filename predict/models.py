@@ -24,19 +24,22 @@ class Predictor(User):
                    {'creator': self.fullname(),
                     'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
                     'role': role,
-                    'new_user': is_new_user
+                    'new_user': is_new_user,
+                    'title': prediction.title
                     })
 
     def send_before_email(self, prediction):
         send_email("Prediction: one week to decision",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_before.html',
-                   {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk':  prediction.id})})
+                   {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
+                    'title': prediction.title})
 
     def send_after_reminder_email(self, prediction):
         send_email("Prediction: decision was not made!",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_after.html',
                    {'creator': self.fullname(),
-                    'link': config('SITE_URL') + reverse('prediction', kwargs={'pk':  prediction.id})
+                    'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
+                    'title': prediction.title
                     })
 
     def send_observer_email(self, prediction, subscribed):
@@ -78,7 +81,8 @@ class Prediction(models.Model):
                    config('DEFAULT_FROM_EMAIL'), self.creator.email, 'email_confirmation.html',
                    {'link': config('SITE_URL') + reverse('my_prediction_list'),
                     'role': role,
-                    'confirmed': confirmed})
+                    'confirmed': confirmed,
+                    'title': self.title})
 
     def __str__(self):
         return self.title
@@ -86,12 +90,14 @@ class Prediction(models.Model):
     def send_creator_email(self):
         send_email("Prediction created",
                    config('DEFAULT_FROM_EMAIL'), self.creator.email, 'email_creation.html',
-                   {'link': config('SITE_URL') + reverse('my_prediction_list')})
+                   {'link': config('SITE_URL') + reverse('my_prediction_list'),
+                    'title': self.title})
 
     def send_witness_email(self):
         send_email("Prediction: It's time to decide",
                    config('DEFAULT_FROM_EMAIL'), self.witness.email, 'email_time_to_decide.html',
-                   {'link': config('SITE_URL') + reverse('my_prediction_list')})
+                   {'link': config('SITE_URL') + reverse('my_prediction_list'),
+                    'title': self.title})
 
     def send_opponent_changed_decision_email(self, opponent_confirmed):
         pass
@@ -117,5 +123,3 @@ def send_email(subject, from_email, to, template, ctx):
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
-
-

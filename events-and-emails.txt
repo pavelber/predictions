@@ -13,8 +13,8 @@ Simplifications:
 
 TODO:
 
-Add share button to a single prediction view
-
-
 Remove code dealing with any changes
 Tests: new prediction form invalid
+
+
+нужно показывать отдельно прошедшие предсказания и те, которые еще не прошли. И во "всех" и в "моих"

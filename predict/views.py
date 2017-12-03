@@ -178,7 +178,7 @@ def get_role(p, current_user):
     elif p.opponent == current_user:
         return "opponent"
     elif p.witness == current_user:
-        return "witness"
+        return "referee"
     elif current_user in p.observers.all():
         return "observer"
     else:

@@ -1,114 +1,136 @@
 {% extends "base.html" %}
 {% block title %}Edit/view prediction{% endblock %}
-{% block head %}{{ form.media }}{% endblock %}
+{% block head %}
+    {{ form.media }}
+{% endblock %}
 {% block content %}
-    <form action="/prediction/{{ pid }}" method="post" onsubmit="submit.disabled = true; return true;">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        <div class="fieldWrapper">
-            {{ form.pid }}
+    <div class="row">
+        <div class="column side">
+            <h2>1</h2>
+
         </div>
-        <div class="fieldWrapper">
-
-            <label for="{{ form.prediction_title.id_for_label }}">Title:</label>
-            {{ form.prediction_title }}
-        </div>
-        <div class="fieldWrapper">
-
-            <label for="{{ form.prediction_text.id_for_label }}">Text:</label>
-            {{ form.prediction_text }}
-        </div>
-        <div class="fieldWrapper">
-
-            <label for="{{ form.prediction_date.id_for_label }}">Date:</label>
-            {{ form.prediction_date }}
-        </div>
-        {% if show_names %}
-            <div class="fieldWrapper">
-
-                <label for="{{ form.creator_name.id_for_label }}">Creator:</label>
-                {{ form.creator_name }}
-            </div>
-            <div class="fieldWrapper">
-
-                <label for="{{ form.witness_email.id_for_label }}">Witness:</label>
-                {{ form.witness_email }}
-            </div>
-            <div class="fieldWrapper">
-
-                <label for="{{ form.opponent_email.id_for_label }}">Opponent:</label>
-                {{ form.opponent_email }}
-            </div>
-        {% endif %}
-        {% if show_withess_confirmation %}
-            <div class="fieldWrapper">
-
-                <label for="{{ form.witness_confirmed.id_for_label }}">Confirm participation:</label>
-                {{ form.witness_confirmed }}
-            </div>
-        {% endif %}
-        {% if show_opponent_confirmation %}
-            <div class="fieldWrapper">
-
-                <label for="{{ form.opponent_confirmed.id_for_label }}">Confirm participation:</label>
-                {{ form.opponent_confirmed }}
-            </div>
-        {% endif %}
-        {% if show_subscribe and logged_in %}
-            <div class="fieldWrapper">
-
-                <label for="{{ form.subscribed.id_for_label }}">Subscribe to the prediction notifications?</label>
-                {{ form.subscribed }}
-            </div>
-        {% endif %}
-        {% if show_prediction_confirmation %}
-            <div class="fieldWrapper">
-
-                <label for="{{ form.prediction_occurred.id_for_label }}">Was the prediction fulfilled?</label>
-                {{ form.prediction_occurred }}
-            </div>
-        {% endif %}
-        {% if show_submit %}
-            <input type="submit" id="submit" value="Submit"/>
-        {% endif %}
-
-        {% if form.errors %}
-            {% for field in form %}
-                {% for error in field.errors %}
-                    <div class="alert alert-danger">
-                        <strong>{{ error|escape }}</strong>
-                    </div>
-                {% endfor %}
-            {% endfor %}
-            {% for error in form.non_field_errors %}
-                <div class="alert alert-danger">
-                    <strong>{{ error|escape }}</strong>
+        <div class="column middle">
+            <form class="bordered-form" action="/prediction/{{ pid }}" method="post" onsubmit="submit.disabled = true; return true;">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="fieldWrapper">
+                    {{ form.pid }}
                 </div>
-            {% endfor %}
-        {% endif %}
-    </form>
+                <div class="fieldWrapper">
 
-    {% if show_delete %}
-        <form action="/delete/{{ pid }}" method="post"> {% csrf_token %}<input type="submit" value="Delete"/></form>
-    {% endif %}
+                    <label for="{{ form.prediction_title.id_for_label }}">Title:</label>
+                    {{ form.prediction_title }}
+                </div>
+                <div class="fieldWrapper">
 
-    {% if not new_form %}
-        {% if not logged_in %}
-            <a href="{% url "login" %}">Login to subscribe for events or to confirm participation in this prediction</a>
-        {% endif %}
+                    <label for="{{ form.prediction_text.id_for_label }}">Text:</label>
+                    {{ form.prediction_text }}
+                </div>
+                <div class="fieldWrapper">
 
-        <div style="width: 300px">
-            <a id="facebookShareLink"
-               href="https://www.facebook.com/sharer/sharer.php?s=100&p[url]={{ site }}/{{ request.get_full_path }}&p[images][0]=&p[title]={{ form.prediction_title.value }}&p[summary]=Description%20goes%20here!"
-               target="_blank"
-               onclick="window.open(this.href,'targetWindow','toolbar=no,location=0,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=250'); return false">
-                <button style="width:100%; margin-top:10px;" type="button"
-                        class="btn btn-block btn-social btn-facebook"><i class="fa fa-facebook fa-2"></i> Share on
-                    Facebook
-                </button>
-            </a>
+                    <label for="{{ form.prediction_date.id_for_label }}">Date:</label>
+                    {{ form.prediction_date }}
+                </div>
+                {% if show_names %}
+                    <div class="fieldWrapper">
+
+                        <label for="{{ form.creator_name.id_for_label }}">Creator:</label>
+                        {{ form.creator_name }}
+                    </div>
+                    <div class="fieldWrapper">
+
+                        <label for="{{ form.witness_email.id_for_label }}">Referee:</label>
+                        {{ form.witness_email }}
+                    </div>
+                    <div class="fieldWrapper">
+
+                        <label for="{{ form.opponent_email.id_for_label }}">Opponent:</label>
+                        {{ form.opponent_email }}
+                    </div>
+                {% endif %}
+                {% if show_withess_confirmation %}
+                    <div class="fieldWrapper">
+
+                        <label for="{{ form.witness_confirmed.id_for_label }}">Confirm participation:</label>
+                        {{ form.witness_confirmed }}
+                    </div>
+                {% endif %}
+                {% if show_opponent_confirmation %}
+                    <div class="fieldWrapper">
+
+                        <label for="{{ form.opponent_confirmed.id_for_label }}">Confirm participation:</label>
+                        {{ form.opponent_confirmed }}
+                    </div>
+                {% endif %}
+                {% if show_subscribe and logged_in %}
+                    <div class="fieldWrapper">
+
+                        <label for="{{ form.subscribed.id_for_label }}">Subscribe to the prediction
+                            notifications?</label>
+                        {{ form.subscribed }}
+                    </div>
+                {% endif %}
+                {% if show_prediction_confirmation %}
+                    <div class="fieldWrapper">
+
+                        <label for="{{ form.prediction_occurred.id_for_label }}">Was the prediction fulfilled?</label>
+                        {{ form.prediction_occurred }}
+                    </div>
+                {% endif %}
+                {% if show_submit %}
+                    <p class="submit">
+                        <input type="submit" id="submit" value="Submit"/>
+                    </p>
+                {% endif %}
+
+                {% if form.errors %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </form>
+
+            {% if show_delete %}
+                <form class="unbordered-form" action="/delete/{{ pid }}" method="post">
+                    {% csrf_token %}
+                    <p class="submit">
+                        <input type="submit" value="Delete"/>
+                    </p>
+                </form>
+            {% endif %}
+
+            {% if not new_form %}
+                {% if not logged_in %}
+                    <a href="{% url "login" %}">Login to subscribe for events or to confirm participation in this
+                        prediction</a>
+                {% endif %}
+
+                <div style="width: 300px">
+                    <a id="facebookShareLink"
+                       href="https://www.facebook.com/sharer/sharer.php?s=100&p[url]={{ site }}/{{ request.get_full_path }}&p[images][0]=&p[title]={{ form.prediction_title.value }}&p[summary]=Description%20goes%20here!"
+                       target="_blank"
+                       onclick="window.open(this.href,'targetWindow','toolbar=no,location=0,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=250'); return false">
+                        <button style="width:100%; margin-top:10px;" type="button"
+                                class="btn btn-block btn-social btn-facebook"><i class="fa fa-facebook fa-2"></i> Share
+                            on
+                            Facebook
+                        </button>
+                    </a>
+                </div>
+            {% endif %}
         </div>
-    {% endif %}
-
+        <div class="column side">
+            <h2>3</h2>
+        </div>
+    </div>
 {% endblock %}
 

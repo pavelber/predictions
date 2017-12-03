@@ -14,50 +14,29 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
           integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
-    <script>
-        $(document).ready(function () {
-
-            $('.prev i').removeClass();
-            $('.prev i').addClass("fa fa-chevron-left");
-
-            $('.next i').removeClass();
-            $('.next i').addClass("fa fa-chevron-right");
-
-        });
-    </script>
-    <script>
-        $("#facebookShareLink").on("click", function () {
-            var fbpopup = window.open("https://www.facebook.com/sharer/sharer.php?u=http://stackoverflow.com", "pop", "width=600, height=400, scrollbars=no");
-            return false;
-        });
-    </script>
-    {% block head %}{% endblock %}
-    <title>{% block title %}My amazing site{% endblock %}</title>
+    <title>FAQ</title>
 
 </head>
 <body>
 
 <div id="header">
-    <h1>Bet the outcome of any event with friends! </h1>
+    <h1>FAQ</h1>
 </div>
 <div id="menu">
     <div id="topnav">
         <a href="http://localhost:8000/list/#">About</a>
         <a href="http://localhost:8000/list/">All Predictions</a>
         {% if logged_in %}
-        <a href="http://localhost:8000/">My Predictions</a>
-        <a href="http://localhost:8000/new">Create New Prediction</a>
+            <a href="http://localhost:8000/">My Predictions</a>
+            <a href="http://localhost:8000/new">Create New Prediction</a>
         {% endif %}
         <a href="http://localhost:8000/../../static/faq.html">FAQ</a>
         <a href="http://localhost:8000/contact.html#">Contact</a>
     </div>
 </div>
 <div id="content">
-    {% block content %}{% endblock %}
+   Email us: xxxxx
+   &copy Ieruham Analitics
 </div>
 
 <div class="footer">Footer</div>

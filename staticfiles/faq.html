@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="../../static/bootstrap-social.css">
+    <link rel="stylesheet" href="../../static/style.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <title>FAQ</title>
+
+</head>
+<body>
+
+<div id="header">
+    <h1>FAQ</h1>
+</div>
+<div id="menu">
+    <div id="topnav">
+        <a href="http://localhost:8000/list/#">About</a>
+        <a href="http://localhost:8000/list/">All Predictions</a>
+        {% if logged_in %}
+            <a href="http://localhost:8000/">My Predictions</a>
+            <a href="http://localhost:8000/new">Create New Prediction</a>
+        {% endif %}
+        <a href="http://localhost:8000/../../static/faq.html">FAQ</a>
+        <a href="http://localhost:8000/contact.html#">Contact</a>
+    </div>
+</div>
+<div id="content">
+    <P>
+    <H3>What the hell?</H3>
+    "??" is designed to help you make wagers with your friends. All you need to do is invite two friends- one of whom
+    will serve as your opponent (AKA, the person who disagrees with you on the future outcome of an event), and a
+    referee- (AKA, your second friend, who will serve as a judge and will settle the bet, after whatever you bet on is
+    already determined).
+    </P>
+
+    <P>
+    <H3>Can I bet on money?</H3>
+    "??" does not handle money transfers, so wagering money using "??" would not be possible. However, nothing really
+    stops you from giving/taking money after losing/winning a bet.
+    </P>
+
+    <P>
+    <H3>Which kind of events can I bet on the outcome of? </H3>
+    Anything! Whether it's on the winner of the next elections or which team will make it to the play-offs, we're not
+    here to judge.
+    </P>
+
+    <P>
+    <H3></H3>
+
+    </P>
+
+    <P>
+    <H3>Can I change the description/topic of my bet after creating it?</H3>
+    Only before any of your friends have confirmed their participation in the wager.
+    </P>
+
+    <P>
+    <H3>Can other people see my bets and predictions?</H3>
+    Others can see what the bet is about but they won't know who the people behind it or the participants are. If you
+    don't want others to know your wager exists, you can use the private mode, which is still in development and will
+    soon be available.
+    </P>
+
+    <P>
+    <H3>A bet I saw really got me interested and I want to see how it plays out. Can I do that?</H3>
+    Yes, you can subscribe to another person's bet and get notified about the results. However, you will not be able to
+    see the names of the participants since those are kept in secret.
+    </P>
+</div>
+
+<div class="footer">Footer</div>
+</body>
+</html>
