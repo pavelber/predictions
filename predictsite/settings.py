@@ -97,19 +97,12 @@ AUTHENTICATION_BACKENDS = (
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': config('DB_ENGINE'),
-#         'NAME':  config('DB_NAME'),
-#         'USER':  config('DB_USER'),
-#         'PASSWORD':  config('DB_PASSWD'),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # config('DB_ENGINE'),
+        'ENGINE': config('DB_ENGINE'), #'django.db.backends.sqlite3',  # config('DB_ENGINE'), #
         'NAME': config('DB_NAME'),
+        'USER':  config('DB_USER'),
+        'PASSWORD':  config('DB_PASSWD'),
     }
 }
 

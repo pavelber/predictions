@@ -4,3 +4,4 @@ urllib3==1.22
 https://github.com/pavelber/django-datetime-widget/archive/master.zip
 python-decouple
 gunicorn
+pymysql
