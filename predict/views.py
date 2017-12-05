@@ -3,12 +3,24 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.shortcuts import render, redirect
+from django.views import View
 from django.views.generic import TemplateView
 from django.views.generic.edit import DeleteView, FormView
 from django.urls import reverse
 
 from predict.forms import PredictionForm
-from predict.models import Prediction, PredictionWithRole, send_email
+from predict.models import Prediction, PredictionWithRole
+
+from django.core.mail import send_mail, BadHeaderError, EmailMultiAlternatives
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
+from .forms import ContactForm
+
+
+class BaseTemplateView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name,
+                      {"logged_in": self.request.user.is_authenticated})
 
 class PredictionListBase(TemplateView):
     template_name = "predict/prediction_list.html"
@@ -183,3 +195,38 @@ def get_role(p, current_user):
         return "observer"
     else:
         return ""
+
+
+class FAQView(BaseTemplateView):
+    template_name = "faq.html"
+
+
+class AboutView(BaseTemplateView):
+    template_name = "about.html"
+
+
+class SuccessView(BaseTemplateView):
+    template_name = "success.html"
+
+
+def email(request):
+    if request.method == 'GET':
+        form = ContactForm()
+    else:
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            from_email = form.cleaned_data['from_email']
+            message = form.cleaned_data['message']
+            try:
+                send_mail(subject, message, from_email)
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
+            return redirect('success')
+    return render(request, "email.html", {'form': form,"logged_in": request.user.is_authenticated})
+
+
+def send_email(subject, message,from_email):
+    msg = EmailMultiAlternatives(subject, message, from_email,config('ADMIN_EMAIL'))
+    msg.attach_alternative(message, "text/plain")
+    msg.send()

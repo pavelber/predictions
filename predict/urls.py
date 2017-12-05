@@ -21,6 +21,10 @@ urlpatterns = [
     url(r'^accounts/logout/$', auth_views.logout, name='logout'),
     url(r'^oauth/', include('social_django.urls', namespace='social')),  # <--
     url(r'^admin/', admin.site.urls),
+    url(r'^email/$', views.email, name='email'),
+    url(r'^success/$', views.SuccessView.as_view(), name='success'),
+    url('faq.html', views.FAQView.as_view(), name='success'),
+    url('about.html', views.AboutView.as_view(), name='success'),
 ]
 
 

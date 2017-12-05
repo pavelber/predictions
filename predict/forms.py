@@ -150,6 +150,12 @@ class PredictionForm(forms.Form):
             subscriber.send_observer_email(prediction, subscribed)
 
 
+# contact form
+class ContactForm(forms.Form):
+    from_email = forms.EmailField(required=True)
+    subject = forms.CharField(required=True)
+    message = forms.CharField(widget=forms.Textarea, required=True)
+
 def get_or_create_user(email):
     try:
         user = Predictor.objects.get(email=email)
