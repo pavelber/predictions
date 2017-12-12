@@ -1,11 +1,11 @@
 body {
     font-family: "Lato", sans-serif;
     margin: 20px 100px 100px 30px;
-    box-shadow: 10px 10px 5px #888888
+    box-shadow: 10px 10px 5px #888888;
 }
 
 #header {
-    background-color: #dbd3d3;
+    background-color: #fff;
 }
 
 /* The navbar container */
@@ -31,26 +31,55 @@ body {
     color: black;
 }
 
+.column {
+    float: left;
+    padding: 10px;
+}
+
+/* Left and right column */
+.column.side {
+    width: 23.5%;
+}
+
+/* Middle column */
+.column.middle {
+    width: 73%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+@media (max-width: 600px) {
+    .column {
+        width: 100%;
+    }
+}
+
+.footer {
+    background-color: #f1f1f1;
+    padding: 10px;
+    text-align: left;
+}
+
 li {
     display: block;
-
-    padding-left: 40px;
+    padding-left: 20px;
     color: #777772;
 
 }
 
-.bordered-form {
+form {
     font-size: 1em;
-    width: 50%;
+    width: 70%;
     padding: 3em;
     border: 1px solid #CCC;
     border-radius: 1em;
-}
 
-.unbordered-form {
-    font-size: 1em;
-    width: 50%;
-    padding: 3em;
 }
 
 label {
@@ -73,9 +102,9 @@ input:focus, textarea:focus {
 
 input {
     font: 1em sans-serif;
-    width: 35%;
+    width: 40%;
     background: #e8e2d6;
-    height: 2em
+    height: 1.5em
 
 }
 
@@ -93,37 +122,43 @@ textarea {
     vertical-align: top;
     height: 9em;
     font: 1em sans-serif;
-    width: 86%
+    width: 82.5%
 }
 
-.column {
-    margin-left: 2em;
-    padding: 10px;
-    width: 98.75%
+p.login {
+    font-size: 24px;
+    font-weight: bold;
+    color: #8c706b;
+    border-bottom: 3px solid #9baabf;
 }
 
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
+p.padding {
+    padding-left: 7%;
+    color: #565959;
+    font-size: 16px;
+    font-style: italic
 }
 
-.text {
-    border-bottom: 1px solid gray;
-    padding: 20px
-}
-
-/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
-@media (max-width: 600px) {
-    .column {
-        width: 100%;
-    }
-}
-
-.footer {
-    background-color: #f1f1f1;
-    padding: 10px;
+p.text {
+    color: #3f3f38;
+    font-size: 20px;
     text-align: left;
+    padding-bottom: 5%;
+    letter-spacing: 2px;
 }
+
+h1 {
+    font-size: 28px;
+    color: #6d3321;
+    text-align: left;
+    padding-left: 20px;
+    letter-spacing: -3px;
+}
+
+
+
+
+
+
 
 

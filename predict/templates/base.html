@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -42,25 +45,33 @@
 <body>
 
 <div id="header">
-    <h1>Bet the outcome of any event with friends! </h1>
+    <h1>A<span style="color: #f28411">r</span>G Y<span style="color:#9baabf">o</span>U </h1>
 </div>
 <div id="menu">
     <div id="topnav">
         <a href="http://localhost:8000/list/#">About</a>
-        <a href="http://localhost:8000/list/">All Predictions</a>
+        <a href="{% url "prediction_list" %}">All Predictions</a>
         {% if logged_in %}
-        <a href="http://localhost:8000/">My Predictions</a>
-        <a href="http://localhost:8000/new">Create New Prediction</a>
+            <a href={% url "my_prediction_list" %}>My Predictions</a>
+            <a href="{% url "prediction_new" %}">Create New Prediction</a>
         {% endif %}
-        <a href="http://localhost:8000/faq.html">FAQ</a>
-        <a href="http://localhost:8000/about.html">About</a>
-        <a href="http://localhost:8000/email">Contact Us</a>
+        <a href={% url "faq" %}>FAQ</a>
+        <a href={% url "about" %}>About</a>
+        <a href={% url "email" %}>Contact Us</a>
     </div>
 </div>
-<div id="content">
-    {% block content %}{% endblock %}
-</div>
+<div class="row">
+    <div class="column middle">
+        {% block content %}{% endblock %}
+    </div>
 
+    <div class="column side">
+
+        <p class="login"><a href="{% url "login" %}">Log<span
+                style="color:#f28411; font-size:28px">.</span>In</a></p>
+        <p class="padding">to create your own predictions or confirm participation in an existing one!</p>
+    </div>
+</div>
 <div class="footer">&copy Ieruham Analytics, 2017,2018</div>
 </body>
 </html>
