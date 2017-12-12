@@ -49,7 +49,6 @@
 </div>
 <div id="menu">
     <div id="topnav">
-        <a href="http://localhost:8000/list/#">About</a>
         <a href="{% url "prediction_list" %}">All Predictions</a>
         {% if logged_in %}
             <a href={% url "my_prediction_list" %}>My Predictions</a>
