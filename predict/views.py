@@ -92,7 +92,7 @@ class PredictionBase(FormView):
             details = self.get_details_dict()
             context.update(details)
             context.update({'show_names': True})
-        # context.update({'logged_in': self.request.user.is_authenticated})
+        context.update({'logged_in': self.request.user.is_authenticated})
         return context
 
 

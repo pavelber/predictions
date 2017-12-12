@@ -66,10 +66,11 @@
     </div>
 
     <div class="column side">
-
-        <p class="login"><a href="{% url "login" %}">Log<span
-                style="color:#f28411; font-size:28px">.</span>In</a></p>
-        <p class="padding">to create your own predictions or confirm participation in an existing one!</p>
+        {% if not logged_in %}
+            <p class="login"><a href="{% url "login" %}">Log<span
+                    style="color:#f28411; font-size:28px">.</span>In</a></p>
+            <p class="padding">to create your own predictions or confirm participation in an existing one!</p>
+        {% endif %}
     </div>
 </div>
 <div class="footer">&copy Ieruham Analytics, 2017,2018</div>
