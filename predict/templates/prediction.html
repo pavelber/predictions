@@ -44,7 +44,7 @@
                 {{ form.opponent_email }}
             </div>
         {% endif %}
-        {% if show_withess_confirmation %}
+        {% if show_witness_confirmation %}
             <div class="fieldWrapper">
 
                 <label for="{{ form.witness_confirmed.id_for_label }}">Confirm participation:</label>
@@ -54,7 +54,7 @@
         {% if show_opponent_confirmation %}
             <div class="fieldWrapper">
 
-                <label for="{{ form.opponent_confirmed.id_for_label }}">Confirm participation:</label>
+                <label for="{{ form.opponent_confirmed.id_for_label }}">Confirm <br/>participation:</label>
                 {{ form.opponent_confirmed }}
             </div>
         {% endif %}
@@ -68,8 +68,7 @@
         {% endif %}
         {% if show_prediction_confirmation %}
             <div class="fieldWrapper">
-
-                <label for="{{ form.prediction_occurred.id_for_label }}">Was the prediction fulfilled?</label>
+                <label for="{{ form.prediction_occurred.id_for_label }}">Fulfilled?</label>
                 {{ form.prediction_occurred }}
             </div>
         {% endif %}

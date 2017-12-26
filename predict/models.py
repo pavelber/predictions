@@ -21,7 +21,7 @@ class Predictor(User):
     def send_invitation_email(self, prediction, role, text, is_new_user):
         send_email("You are invited participate in prediction",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_invitation.html',
-                   {'creator': self.email,
+                   {'creator': prediction.creator.email,
                     'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
                     'role': role,
                     'new_user': is_new_user,
@@ -38,13 +38,18 @@ class Predictor(User):
     def send_after_reminder_email(self, prediction):
         send_email("Prediction: decision was not made!",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_after.html',
-                   {'creator': self.email,
+                   {'creator': prediction.creator.email,
                     'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
                     'title': prediction.title
                     })
 
     def send_observer_email(self, prediction, subscribed):
-        pass
+        send_email("Your subscription to a wager",
+                   config('DEFAULT_FROM_EMAIL'), self.email, 'email_subscriber_subscribed.html',
+                   {'subscribed': subscribed,
+                    'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
+                    'title': prediction.title
+                    })
 
     def send_other_changed_email(self, role, prediction):
         pass
@@ -108,6 +113,9 @@ class Prediction(models.Model):
         pass
 
     def send_email_details_updated(self):
+        pass
+
+    def decision_made(self, prediction_confirmed):
         pass
 
 

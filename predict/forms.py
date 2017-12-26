@@ -44,9 +44,10 @@ class PredictionForm(forms.Form):
             self.fields['creator_name'].widget.attrs['readonly'] = True
             self.fields['witness_email'].widget.attrs['readonly'] = not details_editable
             self.fields['opponent_email'].widget.attrs['readonly'] = not details_editable
-            self.fields['witness_confirmed'].widget.attrs['disabled'] = witness_confirmed
-            self.fields['opponent_confirmed'].widget.attrs['disabled'] = opponent_confirmed
-            self.fields['prediction_occurred'].widget.attrs['disabled'] = prediction_occurred
+            self.fields['witness_confirmed'].widget.attrs['disabled'] = witness_confirmed is True
+
+            self.fields['opponent_confirmed'].widget.attrs['disabled'] = opponent_confirmed is True
+            self.fields['prediction_occurred'].widget.attrs['disabled'] = prediction_occurred is True
             self.fields['pid'].widget.attrs['readonly'] = True
 
     prediction_title = forms.CharField()
@@ -86,7 +87,7 @@ class PredictionForm(forms.Form):
                                 opponent=opponent, witness=witness, witness_confirmed=False, opponent_confirmed=False,
                                 creator=creator)
         prediction.save()
-        #TODO: move roles names and text to one place
+        # TODO: move roles names and text to one place
         witness.send_invitation_email(prediction, "referee", 'to be the referee on his wager about', is_new_witness)
         opponent.send_invitation_email(prediction, "opponent", 'to bet on', is_new_opponent)
         prediction.send_creator_email()
@@ -116,8 +117,8 @@ class PredictionForm(forms.Form):
                 prediction.opponent.send_invitation_email(prediction, "opponent", is_new_opponent)
 
             if prediction_title != prediction.title or \
-                            prediction_text != prediction.text or \
-                            prediction_date != prediction.date:
+                    prediction_text != prediction.text or \
+                    prediction_date != prediction.date:
                 prediction.title = prediction_title
                 prediction.text = prediction_text
                 prediction.date = prediction_date
@@ -128,13 +129,19 @@ class PredictionForm(forms.Form):
 
         elif current_user == prediction.witness:
             witness_confirmed = self.cleaned_data['witness_confirmed']
-            if witness_confirmed != prediction.witness_confirmed:
+            if witness_confirmed != '' and witness_confirmed != prediction.witness_confirmed: #'' means was hidden
                 prediction.witness_confirmed = witness_confirmed
                 prediction.save()
                 prediction.send_witness_changed_decision_email(witness_confirmed)
+            prediction_confirmed = self.cleaned_data['prediction_confirmed']
+            if prediction_confirmed in ('Yes','No') and prediction_confirmed != prediction.prediction_confirmed:
+                prediction.prediction_confirmed = prediction_confirmed
+                prediction.save()
+                prediction.desicion_made(prediction_confirmed)
+
         elif current_user == prediction.opponent:
             opponent_confirmed = self.cleaned_data['opponent_confirmed']
-            if opponent_confirmed != prediction.opponent_confirmed:
+            if opponent_confirmed != '' and opponent_confirmed != prediction.opponent_confirmed: #'' means was hidden
                 prediction.opponent_confirmed = opponent_confirmed
                 prediction.save()
                 prediction.send_opponent_changed_decision_email(opponent_confirmed)
@@ -155,6 +162,7 @@ class ContactForm(forms.Form):
     from_email = forms.EmailField(required=True)
     subject = forms.CharField(required=True)
     message = forms.CharField(widget=forms.Textarea, required=True)
+
 
 def get_or_create_user(email):
     try:

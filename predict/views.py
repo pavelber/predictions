@@ -147,9 +147,9 @@ class PredictionView(PredictionBase):
         details_editable = is_creator and not (prediction.witness_confirmed or prediction.opponent_confirmed)
         show_submit = (is_witness and not prediction.witness_confirmed) \
                       or (is_opponent and not prediction.opponent_confirmed) \
-                      or (is_creator and details_editable)
-        show_witness_confirmation = is_witness
-        show_opponent_confirmation = is_opponent
+                      or (is_creator and details_editable) or (is_witness and not prediction.prediction_occurred)
+        show_witness_confirmation = is_witness and not prediction.witness_confirmed
+        show_opponent_confirmation = is_opponent and not prediction.opponent_confirmed
         show_prediction_confirmation = is_witness
         show_names = is_witness or is_opponent or is_creator
         show_subscribe = not (is_witness or is_opponent or is_creator)
