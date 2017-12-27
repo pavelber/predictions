@@ -72,11 +72,18 @@
                 {{ form.prediction_occurred }}
             </div>
         {% endif %}
-        {% if show_submit %}
-            <p class="submit">
-                <input type="submit" id="submit" value="Submit"/>
-            </p>
-        {% endif %}
+
+        <p class="submit">
+            {% if show_submit %}
+                <input type="submit" id="submit" name="Submit" value="Submit"/>
+            {% endif %}
+            {% if show_delete %}
+
+                <input type="submit" name="Delete" value="Delete"/>
+            {% endif %}
+        </p>
+
+
 
         {% if form.errors %}
             {% for field in form %}

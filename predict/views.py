@@ -7,10 +7,10 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
-from django.views.generic.edit import DeleteView, FormView
+from django.views.generic.edit import FormView
 
 from predict.forms import PredictionForm
-from predict.models import Prediction, PredictionWithRole
+from predict.models import Prediction, PredictionWithRole, send_email
 from .forms import ContactForm
 
 
@@ -56,19 +56,6 @@ class PredictionList(PredictionListBase):
         predictions = Prediction.objects.all().order_by('-date')
         role_predictions = map(lambda p: PredictionWithRole(p, get_role(p, current_user)), predictions)
         return list(role_predictions)
-
-
-class PredictionDelete(LoginRequiredMixin, DeleteView):
-    model = Prediction
-    success_url = reverse_lazy('prediction_list')
-
-    def delete(self, request, *args, **kwargs):
-        response = super(PredictionDelete, self).delete(self, request, *args, **kwargs)
-        # print("Delete prediction", type(self.object), self.object, self.object.title, self.object.creator.email)
-        send_email("Prediction deleted",
-                   config('DEFAULT_FROM_EMAIL'), self.object.creator.email, 'email_delete.html',
-                   {'link': config('SITE_URL') + reverse('my_prediction_list'), 'title': self.object.title})
-        return response
 
 
 class PredictionBase(FormView):
@@ -178,7 +165,16 @@ class PredictionView(PredictionBase):
 
     def form_valid(self, form):
         current_user = self.request.user
-        form.update_prediction(current_user)
+        pid = form.cleaned_data['pid']
+        prediction = Prediction.objects.get(pk=pid)
+        if form.data['Delete'] == 'Delete':
+            if prediction.creator == current_user:
+                prediction.delete()
+                send_email("Prediction deleted",
+                           config('DEFAULT_FROM_EMAIL'), prediction.creator.email, 'email_delete.html',
+                           {'link': config('SITE_URL') + reverse('my_prediction_list'), 'title': prediction.title})
+        else:
+            form.update_prediction(current_user)
         return super(PredictionView, self).form_valid(form)
 
 

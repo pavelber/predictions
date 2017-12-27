@@ -4,15 +4,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href={% static "style.css" %}>
     <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
     <link rel="shortcut icon" type="image/png" href={% static "favicon.png" %}/>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans"/>
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    {#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"#}
+    {#          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">#}
 
-    <link rel="stylesheet" href={% static "bootstrap-social.css" %} >
-    <link rel="stylesheet" href={% static "style.css" %} >
+    <link rel="stylesheet" href={% static "bootstrap-social.css" %}>
 
     <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
@@ -44,12 +46,11 @@
 
 </head>
 <body>
-
-<div id="header">
-    <h1>A<span style="color: #f28411">r</span>G Y<span style="color:#9baabf">o</span>U </h1>
-</div>
-<div id="menu">
-    <div id="topnav">
+<div class="container">
+    <div id="header">
+        A<span style="color: #f28411">r</span>G Y<span style="color:#9baabf">o</span>U
+    </div>
+    <div id="menu">
         <a href="{% url "prediction_list" %}">All Predictions</a>
         {% if logged_in %}
             <a href={% url "my_prediction_list" %}>My Predictions</a>
@@ -59,20 +60,18 @@
         <a href={% url "about" %}>About</a>
         <a href={% url "email" %}>Contact Us</a>
     </div>
-</div>
-<div class="row">
-    <div class="column middle">
+    <div id="content">
         {% block content %}{% endblock %}
     </div>
 
-    <div class="column side">
+    <div id="login">
         {% if not logged_in %}
             <p class="login"><a href="{% url "login" %}">Log<span
                     style="color:#f28411; font-size:28px">.</span>In</a></p>
-            <p class="padding">to create your own predictions or confirm participation in an existing one!</p>
+            <p class="padding">to create your own wagers or confirm participation in an existing one!</p>
         {% endif %}
     </div>
+    <div id="footer">&copy Ieruham Analytics, 2017,2018</div>
 </div>
-<div class="footer">&copy Ieruham Analytics, 2017,2018</div>
 </body>
 </html>

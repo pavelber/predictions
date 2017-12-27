@@ -12,7 +12,6 @@ urlpatterns = [
     url(r'^new$', views.PredictionNew.as_view(), name='prediction_new'),
     url(r'^prediction/(?P<pk>\d+)$', views.PredictionView.as_view(), name='prediction'),
     url(r'^prediction/$', views.PredictionNew.as_view(), name='prediction'),
-    url(r'^delete/(?P<pk>\d+)$', views.PredictionDelete.as_view(), name='prediction_delete'),
     url(r'^accounts/login/$', auth_views.login, name='login'),
     url(r'^accounts/profile/$', views.PredictionList.as_view(), name='prediction_list'),
     url(r'^list/$', views.PredictionList.as_view(), name='prediction_list'),
