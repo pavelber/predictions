@@ -1,7 +1,7 @@
 Django==1.11.4
 social-auth-app-django==1.2.0
 urllib3==1.22
-https://github.com/pavelber/django-datetime-widget/archive/master.zip
+django-widget_tweaks
 python-decouple
 gunicorn
 pymysql

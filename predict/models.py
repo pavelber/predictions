@@ -6,6 +6,9 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.html import strip_tags
 
+WITNESS_ROLE = "referee"
+OPPONENT_ROLE = "opponent"
+
 
 class Predictor(User):
     class Meta:
@@ -19,24 +22,24 @@ class Predictor(User):
         return name
 
     def send_invitation_email(self, prediction, role, text, is_new_user):
-        send_email("You are invited participate in prediction",
+        send_email("You are invited participate in a wager",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_invitation.html',
                    {'creator': prediction.creator.email,
                     'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
                     'role': role,
                     'new_user': is_new_user,
                     'title': prediction.title,
-                    'text':text
+                    'text': text
                     })
 
     def send_before_email(self, prediction):
-        send_email("Prediction: one week to decision",
+        send_email("Wager: one week to decision",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_before.html',
                    {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
                     'title': prediction.title})
 
     def send_after_reminder_email(self, prediction):
-        send_email("Prediction: decision was not made!",
+        send_email("Wager: decision was not made!",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_after.html',
                    {'creator': prediction.creator.email,
                     'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
@@ -74,12 +77,11 @@ class Prediction(models.Model):
 
     observers = models.ManyToManyField(Predictor);
 
-    # TODO: move roles names and text to one place
     def get_role(self, user):
         if user.id == self.witness.id:
-            return "witness"
+            return WITNESS_ROLE
         elif user.id == self.opponent.id:
-            return "opponent"
+            return OPPONENT_ROLE
         else:
             return None
 
@@ -95,15 +97,15 @@ class Prediction(models.Model):
         return self.title
 
     def send_creator_email(self):
-        send_email("Prediction created",
+        send_email("Wager created",
                    config('DEFAULT_FROM_EMAIL'), self.creator.email, 'email_creation.html',
                    {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': self.id}),
                     'title': self.title})
 
     def send_witness_email(self):
-        send_email("Prediction: It's time to decide",
+        send_email("Wager: It's time to decide",
                    config('DEFAULT_FROM_EMAIL'), self.witness.email, 'email_time_to_decide.html',
-                   {'link': config('SITE_URL') +  reverse('prediction', kwargs={'pk': self.id}),
+                   {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': self.id}),
                     'title': self.title})
 
     def send_opponent_changed_decision_email(self, opponent_confirmed):
@@ -116,7 +118,18 @@ class Prediction(models.Model):
         pass
 
     def decision_made(self, prediction_confirmed):
-        pass
+        mail_props = {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': self.id}),
+                      'title': self.title,
+                      'confirmed': prediction_confirmed}
+        send_email("Wager finished",
+                   config('DEFAULT_FROM_EMAIL'), self.witness.email, 'email_wager_done.html', mail_props)
+        send_email("Wager finished",
+                   config('DEFAULT_FROM_EMAIL'), self.creator.email, 'email_wager_done.html', mail_props)
+        send_email("Wager finished",
+                   config('DEFAULT_FROM_EMAIL'), self.opponent.email, 'email_wager_done.html', mail_props)
+        for subscriber in self.observers.all():
+            send_email("Wager finished",
+                       config('DEFAULT_FROM_EMAIL'), subscriber.email, 'email_wager_done.html', mail_props)
 
 
 class PredictionWithRole:

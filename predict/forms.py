@@ -1,11 +1,9 @@
 from datetime import date, timedelta
 
-from datetimewidget.widgets import DateWidget
 from django import forms
 from django.contrib.admin.widgets import AdminDateWidget
-from django.forms import SelectDateWidget
 
-from predict.models import Prediction, Predictor
+from predict.models import Prediction, Predictor, WITNESS_ROLE, OPPONENT_ROLE
 
 CHOICES_YES_NO = (
     (True, 'Yes'),
@@ -84,9 +82,8 @@ class PredictionForm(forms.Form):
                                 opponent=opponent, witness=witness, witness_confirmed=False, opponent_confirmed=False,
                                 creator=creator)
         prediction.save()
-        # TODO: move roles names and text to one place
-        witness.send_invitation_email(prediction, "referee", 'to be the referee on his wager about', is_new_witness)
-        opponent.send_invitation_email(prediction, "opponent", 'to bet on', is_new_opponent)
+        witness.send_invitation_email(prediction, WITNESS_ROLE, 'to be the referee on his wager about', is_new_witness)
+        opponent.send_invitation_email(prediction, OPPONENT_ROLE, 'to bet on', is_new_opponent)
         prediction.send_creator_email()
 
     def update_prediction(self, current_user):
@@ -126,19 +123,19 @@ class PredictionForm(forms.Form):
 
         elif current_user == prediction.witness:
             witness_confirmed = self.cleaned_data['witness_confirmed']
-            if witness_confirmed != '' and witness_confirmed != prediction.witness_confirmed: #'' means was hidden
+            if witness_confirmed != '' and witness_confirmed != prediction.witness_confirmed:  # '' means was hidden
                 prediction.witness_confirmed = witness_confirmed
                 prediction.save()
                 prediction.send_witness_changed_decision_email(witness_confirmed)
-            prediction_confirmed = self.cleaned_data['prediction_confirmed']
-            if prediction_confirmed in ('Yes','No') and prediction_confirmed != prediction.prediction_confirmed:
-                prediction.prediction_confirmed = prediction_confirmed
+            prediction_occurred = self.cleaned_data['prediction_occurred']
+            if prediction_occurred in ('True', 'False') and prediction_occurred != prediction.prediction_occurred:
+                prediction.prediction_occurred = prediction_occurred
                 prediction.save()
-                prediction.desicion_made(prediction_confirmed)
+                prediction.decision_made(prediction_occurred)
 
         elif current_user == prediction.opponent:
             opponent_confirmed = self.cleaned_data['opponent_confirmed']
-            if opponent_confirmed != '' and opponent_confirmed != prediction.opponent_confirmed: #'' means was hidden
+            if opponent_confirmed != '' and opponent_confirmed != prediction.opponent_confirmed:  # '' means was hidden
                 prediction.opponent_confirmed = opponent_confirmed
                 prediction.save()
                 prediction.send_opponent_changed_decision_email(opponent_confirmed)
