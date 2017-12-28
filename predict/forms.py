@@ -2,6 +2,8 @@ from datetime import date, timedelta
 
 from datetimewidget.widgets import DateWidget
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
+from django.forms import SelectDateWidget
 
 from predict.models import Prediction, Predictor
 
@@ -53,12 +55,7 @@ class PredictionForm(forms.Form):
     prediction_title = forms.CharField()
     prediction_text = forms.CharField(widget=forms.Textarea)
     one_week = date.today() + timedelta(days=7)
-    dateTimeOptions = {
-        'format': 'dd MM, yyyy',
-        'startDate': (date.today() + timedelta(days=30)).strftime('%d %B, %Y'),
-        'autoclose': True
-    }
-    prediction_date = forms.DateField(widget=DateWidget(options=dateTimeOptions), input_formats=['%d %B, %Y'])
+    prediction_date = forms.DateField(widget=AdminDateWidget())
 
     creator_name = forms.CharField(required=False)
     witness_email = forms.EmailField(required=False)

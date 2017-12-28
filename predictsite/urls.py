@@ -16,10 +16,13 @@ Including another URLconf
 from django.conf.urls import url,include
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.i18n import JavaScriptCatalog
 
 urlpatterns = [
+    url(r'^admin/jsi18n', JavaScriptCatalog.as_view()),
     url(r'^admin/', admin.site.urls),
     url(r'', include('predict.urls')),
+
 
 ]
 

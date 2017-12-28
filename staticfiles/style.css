@@ -4,20 +4,10 @@ body {
     /*box-shadow: 10px 10px 5px #888888;*/
 }
 
-
 li {
     display: block;
     padding-left: 20px;
     color: #777772;
-
-}
-
-form {
-    font-size: 1em;
-    width: 70%;
-    padding: 3em;
-    border: 1px solid #CCC;
-    border-radius: 1em;
 
 }
 
@@ -94,24 +84,7 @@ p.text {
     height: 100%;
 }
 
-#forms {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto;
-    grid-gap: 3px;
-}
-
-.form-label {
-    grid-column: 1;
-}
-
-.form-value {
-    grid-column: 2/3;
-}
-
-
-
-#header {
+#argyou-header {
     /*background-color: #7a3f28;*/
     grid-column: 1 / 2;
     display: block;
@@ -127,7 +100,7 @@ p.text {
     margin-bottom: 10px;
 }
 
-#menu {
+#argyou-menu {
     grid-column: 2 / -1;
     overflow: hidden;
     background-color: #7a3f28;
@@ -135,12 +108,12 @@ p.text {
     margin-bottom: 10px;
 }
 
-#menu {
+#argyou-menu {
     overflow: hidden;
     background-color: #7a3f28;
 }
 
-#menu a {
+#argyou-menu a {
     float: left;
     display: block;
     color: #f2f2f2;
@@ -150,13 +123,12 @@ p.text {
     border-right: 1px solid white;
 }
 
-#menu a:hover {
+#argyou-menu a:hover {
     background-color: #ddd;
     color: black;
 }
 
-
-#footer {
+#argyou-footer {
     grid-column: 1 / -1;
     box-shadow: 10px 10px 5px #888888;
     background-color: #f1f1f1;
@@ -165,14 +137,40 @@ p.text {
     font-style: italic;
 }
 
-#content {
+#argyou-content {
     grid-column: span 2
 }
-#login {
+
+#argyou-login {
 
 }
 
+form {
+    font-size: 1em;
+    width: 70%;
+    padding: 3em;
+    border: 1px solid #CCC;
+    border-radius: 1em;
+    display: grid;
+    grid-template-columns: 200px auto;
 
+}
 
+label {
+    grid-column: 1 / 2;
+}
 
+input {
+    grid-column: 2 / 3;
+}
 
+select {
+    grid-column: 2 / 3;
+}
+
+#argyou-submit {
+    grid-column: 1 / 2
+}
+#argyou-delete {
+    grid-column: 2 / 3
+}

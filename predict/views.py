@@ -167,7 +167,7 @@ class PredictionView(PredictionBase):
         current_user = self.request.user
         pid = form.cleaned_data['pid']
         prediction = Prediction.objects.get(pk=pid)
-        if form.data['Delete'] == 'Delete':
+        if 'Delete' in form.data:
             if prediction.creator == current_user:
                 prediction.delete()
                 send_email("Prediction deleted",

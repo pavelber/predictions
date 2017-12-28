@@ -1,3 +1,4 @@
+{% load i18n static %}
 <!DOCTYPE html>
 {% load static %}
 <html>
@@ -21,9 +22,9 @@
           integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
+{#    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"#}
+{#            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"#}
+{#            crossorigin="anonymous"></script>#}
     <script>
         $(document).ready(function () {
 
@@ -35,43 +36,37 @@
 
         });
     </script>
-    <script>
-        $("#facebookShareLink").on("click", function () {
-            var fbpopup = window.open("https://www.facebook.com/sharer/sharer.php?u=http://stackoverflow.com", "pop", "width=600, height=400, scrollbars=no");
-            return false;
-        });
-    </script>
     {% block head %}{% endblock %}
     <title>{% block title %}My amazing site{% endblock %}</title>
 
 </head>
 <body>
 <div class="container">
-    <div id="header">
+    <div id="argyou-header">
         A<span style="color: #f28411">r</span>G Y<span style="color:#9baabf">o</span>U
     </div>
-    <div id="menu">
-        <a href="{% url "prediction_list" %}">All Predictions</a>
+    <div id="argyou-menu">
+        <a href="{% url "prediction_list" %}">All Wagers</a>
         {% if logged_in %}
-            <a href={% url "my_prediction_list" %}>My Predictions</a>
-            <a href="{% url "prediction_new" %}">Create New Prediction</a>
+            <a href={% url "my_prediction_list" %}>My Wagers</a>
+            <a href="{% url "prediction_new" %}">Create New Wager</a>
         {% endif %}
         <a href={% url "faq" %}>FAQ</a>
         <a href={% url "about" %}>About</a>
         <a href={% url "email" %}>Contact Us</a>
     </div>
-    <div id="content">
+    <div id="argyou-content">
         {% block content %}{% endblock %}
     </div>
 
-    <div id="login">
+    <div id="argyou-login">
         {% if not logged_in %}
             <p class="login"><a href="{% url "login" %}">Log<span
                     style="color:#f28411; font-size:28px">.</span>In</a></p>
             <p class="padding">to create your own wagers or confirm participation in an existing one!</p>
         {% endif %}
     </div>
-    <div id="footer">&copy Ieruham Analytics, 2017,2018</div>
+    <div id="argyou-footer">&copy Ieruham Analytics, 2017,2018</div>
 </div>
 </body>
 </html>

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'datetimewidget',
+    'widget_tweaks',
 ]
 
 LOGIN_REQUIRED_FOR_CRUD = False
