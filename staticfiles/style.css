@@ -78,7 +78,7 @@ p.text {
 
 .container {
     display: grid;
-    grid-template-columns: 1fr 5fr 2fr;
+    grid-template-columns: 1fr 9fr 3fr;
     grid-template-rows: 50px auto 30px;
     grid-gap: 3px;
     height: 100%;
@@ -86,6 +86,8 @@ p.text {
 
 #argyou-header {
     /*background-color: #7a3f28;*/
+    font-weight: bold;
+
     grid-column: 1 / 2;
     display: block;
     font-size: 2em;
@@ -105,12 +107,8 @@ p.text {
     overflow: hidden;
     background-color: #7a3f28;
     box-shadow: 10px 10px 5px #888888;
+    font-weight: bold;
     margin-bottom: 10px;
-}
-
-#argyou-menu {
-    overflow: hidden;
-    background-color: #7a3f28;
 }
 
 #argyou-menu a {
@@ -129,6 +127,7 @@ p.text {
 }
 
 #argyou-footer {
+    font-size: smaller;
     grid-column: 1 / -1;
     box-shadow: 10px 10px 5px #888888;
     background-color: #f1f1f1;
@@ -170,10 +169,10 @@ select {
 #argyou-submit {
     grid-column: 1 / 2
 }
+
 #argyou-delete {
     grid-column: 2 / 3
 }
-
 
 #predictions {
     display: grid;
