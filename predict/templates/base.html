@@ -46,9 +46,8 @@
         A<span style="color: #f28411">r</span>G Y<span style="color:#9baabf">o</span>U
     </div>
     <div id="argyou-menu">
-        <a href="{% url "prediction_list" %}">All Wagers</a>
+        <a href="{% url "prediction_list" %}">Wagers</a>
         {% if logged_in %}
-            <a href={% url "my_prediction_list" %}>My Wagers</a>
             <a href="{% url "prediction_new" %}">Create New Wager</a>
         {% endif %}
         <a href={% url "faq" %}>FAQ</a>

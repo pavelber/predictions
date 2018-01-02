@@ -1,12 +1,15 @@
+import datetime
+
 from decouple import config
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import BadHeaderError, EmailMultiAlternatives
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
+from django.views.generic.base import View
 from django.views.generic.edit import FormView
 
 from predict.forms import PredictionForm
@@ -20,36 +23,37 @@ class BaseTemplateView(TemplateView):
                       {"logged_in": self.request.user.is_authenticated})
 
 
-class PredictionListBase(TemplateView):
-    template_name = "predict/prediction_list.html"
-    title = ""
-
+class JsonPredictionList(View):
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name,
-                      {'predictions': self.get_predictions(),
-                       "title": self.title,
-                       "logged_in": self.request.user.is_authenticated})
+        predictions = self.get_predictions()
+        json = list(
+            map(lambda p: serialize(p), predictions)
+        )
 
-
-class MyPredictionList(PredictionListBase):
-    def get(self, request, *args, **kwargs):
-        current_user = request.user
-        if not current_user.is_authenticated:
-            return redirect('/all')
-
-        return super(MyPredictionList, self).get(request, *args, **kwargs)
+        return JsonResponse({"predictions": json})
 
     def get_predictions(self):
         current_user = self.request.user
-        predictions = Prediction.objects.filter(
-            Q(creator=current_user) | Q(witness=current_user) | Q(opponent=current_user) |
-            Q(observers__email=current_user.email)).order_by('-date')
+        role = self.request.GET.get('role')
+        status = self.request.GET.get('status')
+        date = self.request.GET.get('date')
+        role_filter = create_filter_from_role(role, current_user)
+        status_filter = create_filter_from_status(status)
+        date_filter = create_filter_from_date(date)
+        all_filter = create_filter_from([role_filter, status_filter, date_filter])
+
+        predictions = Prediction.objects.filter(all_filter).order_by('-date')
         role_predictions = map(lambda p: PredictionWithRole(p, get_role(p, current_user)), predictions)
         return list(role_predictions)
 
 
-class PredictionList(PredictionListBase):
+class PredictionList(TemplateView):
     template_name = "predict/prediction_list.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name,
+                      {'predictions': self.get_predictions(),
+                       "logged_in": self.request.user.is_authenticated})
 
     def get_predictions(self):
         current_user = self.request.user
@@ -224,3 +228,56 @@ def email(request):
                 return HttpResponse('Invalid header found.')
             return redirect('success')
     return render(request, "email.html", {'form': form, "logged_in": request.user.is_authenticated})
+
+
+def create_filter_from_role(role, current_user):
+    if role == 'my':
+        role_filter = Q(creator=current_user) | Q(witness=current_user) | Q(opponent=current_user) | Q(
+            observers__email=current_user.email)
+    else:
+        role_filter = None
+
+    return role_filter
+
+
+def create_filter_from_status(status):
+    if status == 'open':
+        status_filter = Q(prediction_occurred=None)
+    elif status == 'closed':
+        status_filter = ~Q(prediction_occurred=None)
+    else:
+        status_filter = None
+    return status_filter
+
+
+def create_filter_from_date(date):
+    if date == 'future':
+        date_filter = Q(date__gte=datetime.date.today())
+    elif date == 'past':
+        date_filter = Q(date__lte=datetime.date.today())
+    else:
+        date_filter = None
+    return date_filter
+
+
+def create_filter_from(filters):
+    filters = list(filter(lambda f: f is not None, filters))
+    if len(filters) == 0:
+        all_filter = Prediction.objects.all()
+    else:
+        all_filter = filters[0]
+        for i in range(1, len(filters)):
+            all_filter = all_filter & filters[i]
+    return all_filter
+
+
+def serialize(p):
+    return {
+        "title": p.prediction.title,
+        "date": p.prediction.date,
+        "text": p.prediction.text,
+        "prediction_occurred": p.prediction.prediction_occurred_as_string(),
+        "opponent_confirmed": p.prediction.opponent_confirmed,
+        "witness_confirmed": p.prediction.witness_confirmed,
+        "role": p.role
+    }

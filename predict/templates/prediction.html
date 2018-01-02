@@ -15,7 +15,7 @@
 {% endblock %}
 {% load widget_tweaks %}
 {% block content %}
-    <form class="bordered-form" action="/prediction/{{ pid }}" method="post"
+    <form id="predict-form" class="bordered-form" action="/prediction/{{ pid }}" method="post"
           onsubmit="submit.disabled = true; return true;">
         {% csrf_token %}
         {{ form.non_field_errors }}

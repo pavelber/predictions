@@ -77,6 +77,14 @@ class Prediction(models.Model):
 
     observers = models.ManyToManyField(Predictor);
 
+    def prediction_occurred_as_string(self):
+        if self.prediction_occurred is None:
+            return ""
+        elif self.prediction_occurred:
+            return "Fulfilled"
+        else:
+            return "Not Fulfilled"
+
     def get_role(self, user):
         if user.id == self.witness.id:
             return WITNESS_ROLE

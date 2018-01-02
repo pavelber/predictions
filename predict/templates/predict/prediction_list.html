@@ -5,13 +5,52 @@
 {% endblock %}
 {% block content %}
 
-    <ul>
-        {% for role_prediction in predictions %}
-            <li>
-                <a href="{% url "prediction" role_prediction.prediction.id %}">{{ role_prediction.prediction.title }}</a>
-                {% if logged_in %}( {{ role_prediction.role }} ){% endif %}
-            </li>
-        {% endfor %}
+    <div id="selectors">
+        Filter wagers:
+        <select id="ownership_selector" onchange="select_changed()">
+              {% if logged_in %}<option value="my">My</option>{% endif %}
+            <option value="all">All</option>
+        </select>
+        <select id="status_selector" onchange="select_changed()">
+            <option value="open">Open</option>
+            <option value="all">All</option>
+            <option value="closed">Closed</option>
+        </select>
+        <select id="date_selector" onchange="select_changed()">
+            <option value="future">Future dates</option>
+            <option value="past">Past dates</option>
+            <option value="all">All</option>
+        </select>
+    </div>
+    <div id="predictions">
+    </div>
+    <script>
+        function put_data(data) {
+            const p_div = $("#predictions");
+            p_div.empty();
+            for (var i in data.predictions) {
+                const p = data.predictions[i];
+                p_div.append('<div style="grid-column: 1"><a href="">' + p.title + '</a></div>');
+                p_div.append('<div>' + p.date + '</div>');
+                p_div.append('<div>' + p.prediction_occurred + '</div>');
+                p_div.append('<div>' + p.role + '</div>');
+            }
 
-    </ul>
+        }
+
+        function select_changed() {
+            $.ajax({
+                dataType: 'json',
+                url: "{% url "filtered_prediction_list" %}" +
+                "?status=" + $("#status_selector").val()
+                + "&role=" + $("#ownership_selector").val()
+                + "&date=" + $("#date_selector").val(),
+                success: put_data
+            });
+        }
+
+        $(document).ready(function () {
+            select_changed()
+        });
+    </script>
 {% endblock %}

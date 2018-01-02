@@ -1,6 +1,6 @@
 body {
     font-family: "Open Sans", sans-serif;
-    margin: 20px 100px 100px 30px;
+    margin: 10px 10px 10px 10px;
     /*box-shadow: 10px 10px 5px #888888;*/
 }
 
@@ -94,7 +94,7 @@ p.text {
     font-weight: bold;
     color: #6d3321;
     text-align: left;
-    padding-left: 20px;
+    #padding-left: 20px;
     letter-spacing: -3px;
     /*box-shadow: 10px 10px 5px #888888;*/
     margin-bottom: 10px;
@@ -145,7 +145,7 @@ p.text {
 
 }
 
-form {
+#predict-form {
     font-size: 1em;
     width: 70%;
     padding: 3em;
@@ -153,7 +153,6 @@ form {
     border-radius: 1em;
     display: grid;
     grid-template-columns: 200px auto;
-
 }
 
 label {
@@ -174,3 +173,14 @@ select {
 #argyou-delete {
     grid-column: 2 / 3
 }
+
+
+#predictions {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-gap: 3px;
+    /*height: 100%;*/
+    grid-auto-rows: auto;
+}
+
+

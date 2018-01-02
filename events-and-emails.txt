@@ -12,9 +12,6 @@ Simplifications:
 
 
 TODO:
-нужно показывать отдельно прошедшие предсказания и те, которые еще не прошли. И во "всех" и в "моих"
-писать детали предсказания: роль (включая сабскрайбера), дату окончания, статус
-фильтр по дате, статусу, роли
 баннеры для ФБ
 Data widget: remove "Today" make chooser disabled when text field is disabled
 Mark in color or something like this won/lost in prediction page
