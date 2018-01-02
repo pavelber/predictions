@@ -42,7 +42,7 @@ class JsonPredictionList(View):
         date_filter = create_filter_from_date(date)
         all_filter = create_filter_from([role_filter, status_filter, date_filter])
 
-        predictions = Prediction.objects.filter(all_filter).order_by('-date')
+        predictions = all_filter.order_by('-date')
         role_predictions = map(lambda p: PredictionWithRole(p, get_role(p, current_user)), predictions)
         return list(role_predictions)
 
@@ -263,12 +263,12 @@ def create_filter_from_date(date):
 def create_filter_from(filters):
     filters = list(filter(lambda f: f is not None, filters))
     if len(filters) == 0:
-        all_filter = Prediction.objects.all()
+        return Prediction.objects.all()
     else:
         all_filter = filters[0]
         for i in range(1, len(filters)):
             all_filter = all_filter & filters[i]
-    return all_filter
+    return Prediction.objects.filter(all_filter)
 
 
 def serialize(p):
