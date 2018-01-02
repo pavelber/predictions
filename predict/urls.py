@@ -7,7 +7,7 @@ from predict.cron import check_one_week_before, check_exact_date, check_one_week
 from . import views
 
 urlpatterns = [
-    url(r'^all$', views.PredictionList.as_view(), name='prediction_list'),
+    url(r'^$', views.PredictionList.as_view(), name='prediction_list'),
     url(r'^new$', views.PredictionNew.as_view(), name='prediction_new'),
     url(r'^prediction/(?P<pk>\d+)$', views.PredictionView.as_view(), name='prediction'),
     url(r'^prediction/$', views.PredictionNew.as_view(), name='prediction'),
