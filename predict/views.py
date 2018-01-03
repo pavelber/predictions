@@ -65,7 +65,7 @@ class PredictionList(TemplateView):
 class PredictionBase(FormView):
     template_name = 'prediction.html'
     form_class = PredictionForm
-    success_url = reverse_lazy('my_prediction_list')
+    success_url = reverse_lazy('prediction_list')
 
     def get_form_kwargs(self):
         kw = super(PredictionBase, self).get_form_kwargs()
@@ -176,7 +176,7 @@ class PredictionView(PredictionBase):
                 prediction.delete()
                 send_email("Prediction deleted",
                            config('DEFAULT_FROM_EMAIL'), prediction.creator.email, 'email_delete.html',
-                           {'link': config('SITE_URL') + reverse('my_prediction_list'), 'title': prediction.title})
+                           {'link': config('SITE_URL') + reverse('prediction_list'), 'title': prediction.title})
         else:
             form.update_prediction(current_user)
         return super(PredictionView, self).form_valid(form)
@@ -279,5 +279,6 @@ def serialize(p):
         "prediction_occurred": p.prediction.prediction_occurred_as_string(),
         "opponent_confirmed": p.prediction.opponent_confirmed,
         "witness_confirmed": p.prediction.witness_confirmed,
+        "pid": p.prediction.id,
         "role": p.role
     }

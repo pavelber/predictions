@@ -30,7 +30,7 @@
             p_div.empty();
             for (var i in data.predictions) {
                 const p = data.predictions[i];
-                p_div.append('<div style="grid-column: 1"><a href="">' + p.title + '</a></div>');
+                p_div.append('<div style="grid-column: 1"><a href="{% url "prediction" %}'+p.pid+'">' + p.title + '</a></div>');
                 p_div.append('<div>' + p.date + '</div>');
                 p_div.append('<div>' + p.prediction_occurred + '</div>');
                 p_div.append('<div>' + p.role + '</div>');

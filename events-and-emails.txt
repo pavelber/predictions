@@ -13,10 +13,5 @@ Simplifications:
 
 TODO:
 баннеры для ФБ
-Data widget: remove "Today" make chooser disabled when text field is disabled
 Mark in color or something like this won/lost in prediction page
-
-
-Tests: new prediction form invalid
-
 

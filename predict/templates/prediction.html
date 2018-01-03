@@ -8,10 +8,6 @@
         django.jQuery = $;
     </script>
     {{ form.media }}
-{#    <link rel="stylesheet" type="text/css" href="/static/admin/css/base.css"/>#}
-    <link rel="stylesheet" type="text/css" href="/static/admin/css/widgets.css"/>
-{#    <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css"/>#}
-    <link rel="stylesheet" type="text/css" href="/static/admin/css/global.css"/>
 {% endblock %}
 {% load widget_tweaks %}
 {% block content %}
@@ -114,6 +110,16 @@
             </a>
         </div>
     {% endif %}
-
+    <script>
+        $(function () {
+            $("#id_prediction_date").datepicker({
+                dateFormat: 'yy-mm-dd',
+                yearRange: '1999:2222',
+                minDate: '+10D',
+                maxDate: '+10Y',
+                inline: true
+            });
+        });
+    </script>
 {% endblock %}
 

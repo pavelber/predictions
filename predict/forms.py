@@ -53,7 +53,7 @@ class PredictionForm(forms.Form):
     prediction_title = forms.CharField()
     prediction_text = forms.CharField(widget=forms.Textarea)
     one_week = date.today() + timedelta(days=7)
-    prediction_date = forms.DateField(widget=AdminDateWidget())
+    prediction_date = forms.DateField()
 
     creator_name = forms.CharField(required=False)
     witness_email = forms.EmailField(required=False)
