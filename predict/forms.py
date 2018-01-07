@@ -49,17 +49,22 @@ class PredictionForm(forms.Form):
             self.fields['opponent_confirmed'].widget.attrs['disabled'] = opponent_confirmed is True
             self.fields['prediction_occurred'].widget.attrs['disabled'] = prediction_occurred is True
             self.fields['pid'].widget.attrs['readonly'] = True
+        self.fields['witness_email'].required = new_form
+        self.fields['opponent_email'].required = new_form
+        self.fields['creator_name'].required = new_form
+        self.fields['witness_confirmed'].required = show_witness_confirmation
+        self.fields['opponent_confirmed'].required = show_opponent_confirmation
 
     prediction_title = forms.CharField()
     prediction_text = forms.CharField(widget=forms.Textarea)
     one_week = date.today() + timedelta(days=7)
     prediction_date = forms.DateField()
 
-    creator_name = forms.CharField(required=False)
-    witness_email = forms.EmailField(required=False)
-    opponent_email = forms.EmailField(required=False)
-    witness_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO, required=False)
-    opponent_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO, required=False)
+    creator_name = forms.CharField()
+    witness_email = forms.EmailField()
+    opponent_email = forms.EmailField()
+    witness_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO)
+    opponent_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO)
     prediction_occurred = forms.TypedChoiceField(choices=CHOICES_THINKING_YES_NO, required=False)
     subscribed = forms.TypedChoiceField(choices=CHOICES_YES_NO, required=False)
     pid = forms.IntegerField(widget=forms.HiddenInput(), required=False)

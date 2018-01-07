@@ -48,7 +48,7 @@ class JsonPredictionList(View):
 
 
 class PredictionList(TemplateView):
-    template_name = "predict/prediction_list.html"
+    template_name = "prediction_list.html"
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name,
@@ -134,16 +134,19 @@ class PredictionView(PredictionBase):
         is_creator = current_user == prediction.creator
         is_witness = current_user == prediction.witness
         is_opponent = current_user == prediction.opponent
+        is_subscriber = not (is_witness or is_opponent or is_creator)
 
         details_editable = is_creator and not (prediction.witness_confirmed or prediction.opponent_confirmed)
         show_submit = (is_witness and not prediction.witness_confirmed) \
                       or (is_opponent and not prediction.opponent_confirmed) \
-                      or (is_creator and details_editable) or (is_witness and not prediction.prediction_occurred)
+                      or (is_creator and details_editable) or (
+                              is_witness and not prediction.prediction_occurred) or is_subscriber
+
         show_witness_confirmation = is_witness and not prediction.witness_confirmed
         show_opponent_confirmation = is_opponent and not prediction.opponent_confirmed
-        show_prediction_confirmation = is_witness
+        show_prediction_confirmation = is_witness and prediction.witness_confirmed
         show_names = is_witness or is_opponent or is_creator
-        show_subscribe = not (is_witness or is_opponent or is_creator)
+        show_subscribe = is_subscriber
         show_delete = is_creator
 
         witness_confirmed = prediction.witness_confirmed

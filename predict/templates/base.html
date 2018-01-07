@@ -22,21 +22,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
           integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-    <!-- Latest compiled and minified JavaScript -->
-{#    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"#}
-{#            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"#}
-{#            crossorigin="anonymous"></script>#}
-    <script>
-        $(document).ready(function () {
 
-            $('.prev i').removeClass();
-            $('.prev i').addClass("fa fa-chevron-left");
-
-            $('.next i').removeClass();
-            $('.next i').addClass("fa fa-chevron-right");
-
-        });
-    </script>
     {% block head %}{% endblock %}
     <title>{% block title %}My amazing site{% endblock %}</title>
 
@@ -54,19 +40,22 @@
         <a href={% url "faq" %}>FAQ</a>
         <a href={% url "about" %}>About</a>
         <a href={% url "email" %}>Contact Us</a>
+        {% if not logged_in %}
+            <a href={% url 'social:begin' 'google-oauth2' %}>Login</a>
+        {% endif %}
     </div>
+    {% if not logged_in %}
+        <div id="argyou-login"><a href={% url 'social:begin' 'google-oauth2' %}>Login (with Google)</a> to create your own wagers or
+            confirm participation in an existing one!
+        </div>
+    {% endif %}
     <div id="argyou-content">
         {% block content %}{% endblock %}
     </div>
 
-    <div id="argyou-login">
-        {% if not logged_in %}
-            <p class="login"><a href="{% url "login" %}">Log<span
-                    style="color:#f28411; font-size:28px">.</span>In</a></p>
-            <p class="padding">to create your own wagers or confirm participation in an existing one!</p>
-        {% endif %}
-    </div>
-    <div id="argyou-footer">&copy Ieruham Analytics, 2017,2018</div>
+
+</div>
+<div id="argyou-footer">&copy Ieruham Analytics, 2017,2018</div>
 </div>
 </body>
 </html>

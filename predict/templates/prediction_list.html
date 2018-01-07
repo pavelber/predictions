@@ -35,6 +35,18 @@
                 p_div.append('<div>' + p.prediction_occurred + '</div>');
                 p_div.append('<div>' + p.role + '</div>');
             }
+            if (data.predictions.length === 0){
+                if ($("#ownership_selector").val()!=="all"){
+                    $("#ownership_selector").val("all");
+                    select_changed();
+                } else if ($("#status_selector").val()!=="all"){
+                    $("#status_selector").val("all");
+                    select_changed();
+                } else if ($("#date_selector").val()!=="all"){
+                    $("#date_selector").val("all");
+                    select_changed();
+                }
+            }
 
         }
 
