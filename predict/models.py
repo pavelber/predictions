@@ -9,6 +9,12 @@ from django.utils.html import strip_tags
 WITNESS_ROLE = "referee"
 OPPONENT_ROLE = "opponent"
 
+login_link = config('SITE_URL') + "/oauth/login/google-oauth2/"
+
+
+def link_to_prediction(pk):
+    return config('SITE_URL') + "/oauth/login/google-oauth2/?next=" + reverse('prediction', kwargs={'pk': pk})
+
 
 class Predictor(User):
     class Meta:
@@ -25,7 +31,7 @@ class Predictor(User):
         send_email("You are invited participate in a wager",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_invitation.html',
                    {'creator': prediction.creator.email,
-                    'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
+                    'link': link_to_prediction(prediction.id),
                     'role': role,
                     'new_user': is_new_user,
                     'title': prediction.title,
@@ -35,14 +41,14 @@ class Predictor(User):
     def send_before_email(self, prediction):
         send_email("Wager: one week to decision",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_before.html',
-                   {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
+                   {'link': link_to_prediction(prediction.id),
                     'title': prediction.title})
 
     def send_after_reminder_email(self, prediction):
         send_email("Wager: decision was not made!",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_after.html',
                    {'creator': prediction.creator.email,
-                    'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
+                    'link': link_to_prediction(prediction.id),
                     'title': prediction.title
                     })
 
@@ -50,7 +56,7 @@ class Predictor(User):
         send_email("Your subscription to a wager",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_subscriber_subscribed.html',
                    {'subscribed': subscribed,
-                    'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': prediction.id}),
+                    'link': link_to_prediction(prediction.id),
                     'title': prediction.title
                     })
 
@@ -96,7 +102,7 @@ class Prediction(models.Model):
     def send_confirmation_email(self, role, confirmed):
         send_email("Participation confirmation",
                    config('DEFAULT_FROM_EMAIL'), self.creator.email, 'email_confirmation.html',
-                   {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': self.id}),
+                   {'link': link_to_prediction(self.id),
                     'role': role,
                     'confirmed': confirmed,
                     'title': self.title})
@@ -107,13 +113,13 @@ class Prediction(models.Model):
     def send_creator_email(self):
         send_email("Wager created",
                    config('DEFAULT_FROM_EMAIL'), self.creator.email, 'email_creation.html',
-                   {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': self.id}),
+                   {'link': link_to_prediction(self.id),
                     'title': self.title})
 
     def send_witness_email(self):
         send_email("Wager: It's time to decide",
                    config('DEFAULT_FROM_EMAIL'), self.witness.email, 'email_time_to_decide.html',
-                   {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': self.id}),
+                   {'link': link_to_prediction(self.id),
                     'title': self.title})
 
     def send_opponent_changed_decision_email(self, opponent_confirmed):
@@ -126,7 +132,7 @@ class Prediction(models.Model):
         pass
 
     def decision_made(self, prediction_confirmed):
-        mail_props = {'link': config('SITE_URL') + reverse('prediction', kwargs={'pk': self.id}),
+        mail_props = {'link': link_to_prediction(self.id),
                       'title': self.title,
                       'confirmed': prediction_confirmed}
         send_email("Wager finished",

@@ -12,8 +12,6 @@ Simplifications:
 
 
 TODO:
-Redirect after login
-If no own wagers, show all
 add share on facebook link to emails
 add invtations div - where wait your confirmation
 Test mobile

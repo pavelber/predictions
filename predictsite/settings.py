@@ -10,14 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os
 import json
-import urllib.request
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+import os
 import urllib
+import urllib.request
 
 from decouple import config
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 
@@ -33,7 +33,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', cast=bool)
 STATIC_ROOT = config('STATIC_ROOT')
 
-ALLOWED_HOSTS = ['predict.getlj.com','localhost']
+ALLOWED_HOSTS = ['predict.getlj.com', 'localhost']
 
 # Application definition
 
@@ -100,13 +100,12 @@ AUTHENTICATION_BACKENDS = (
 
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE'), #'django.db.backends.sqlite3',  # config('DB_ENGINE'), #
+        'ENGINE': config('DB_ENGINE'),  # 'django.db.backends.sqlite3',  # config('DB_ENGINE'), #
         'NAME': config('DB_NAME'),
-        'USER':  config('DB_USER'),
-        'PASSWORD':  config('DB_PASSWD'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWD'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -192,6 +191,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "staticfiles"),
 ]
 
+
 # This is initially from https://github.com/python-social-auth/social-core/blob/master/social_core/pipeline/user.py
 def get_username(strategy, details, backend, user=None, *args, **kwargs):
     # Get the logged in user (if any)
@@ -201,12 +201,6 @@ def get_username(strategy, details, backend, user=None, *args, **kwargs):
     if not details.get('email'):
         error = "Sorry, but your social network (Facebook or Google) needs to provide us your email address."
         return HttpResponseRedirect(reverse('repairs-social-network-error') + "?error=" + urllib.quote_plus(error))
-
-    # Custom: if user is already logged in, double check his email matches the social network email
-#    if logged_in_user:
-#        if logged_in_user.lower() != details.get('email').lower():
-#            error = "Sorry, but you are already logged in with another account, and the email addresses do not match. Try logging out first, please."
-#            return HttpResponseRedirect(reverse('repairs-social-network-error') + "?error=" + urllib.quote_plus(error))
 
     return {
         'username': details.get('email').lower(),

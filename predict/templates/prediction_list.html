@@ -7,16 +7,16 @@
 
     <div id="selectors">
         Filter wagers:
-        <select id="ownership_selector" onchange="select_changed()">
+        <select id="ownership_selector" onchange="select_changed(false)">
               {% if logged_in %}<option value="my">My</option>{% endif %}
             <option value="all">All</option>
         </select>
-        <select id="status_selector" onchange="select_changed()">
+        <select id="status_selector" onchange="select_changed(false)">
             <option value="open">Open</option>
             <option value="all">All</option>
             <option value="closed">Closed</option>
         </select>
-        <select id="date_selector" onchange="select_changed()">
+        <select id="date_selector" onchange="select_changed(false)">
             <option value="future">Future dates</option>
             <option value="past">Past dates</option>
             <option value="all">All</option>
@@ -25,7 +25,8 @@
     <div id="predictions">
     </div>
     <script>
-        function put_data(data) {
+
+        function put_data(refresh_if_no, data) {
             const p_div = $("#predictions");
             p_div.empty();
             for (var i in data.predictions) {
@@ -35,7 +36,7 @@
                 p_div.append('<div>' + p.prediction_occurred + '</div>');
                 p_div.append('<div>' + p.role + '</div>');
             }
-            if (data.predictions.length === 0){
+            if (data.predictions.length === 0 && refresh_if_no){
                 if ($("#ownership_selector").val()!=="all"){
                     $("#ownership_selector").val("all");
                     select_changed();
@@ -50,19 +51,20 @@
 
         }
 
-        function select_changed() {
+        function select_changed(refresh_if_no) {
+            const put_data_bind = put_data.bind(null,refresh_if_no)
             $.ajax({
                 dataType: 'json',
                 url: "{% url "filtered_prediction_list" %}" +
                 "?status=" + $("#status_selector").val()
                 + "&role=" + $("#ownership_selector").val()
                 + "&date=" + $("#date_selector").val(),
-                success: put_data
+                success: put_data_bind
             });
         }
 
         $(document).ready(function () {
-            select_changed()
+            select_changed(true)
         });
     </script>
 {% endblock %}
