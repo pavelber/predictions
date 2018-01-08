@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^accounts/profile/$', views.PredictionList.as_view(), name='prediction_list'),
     url(r'^list/$', views.PredictionList.as_view(), name='prediction_list'),
     url(r'^predictions$', views.JsonPredictionList.as_view(), name='filtered_prediction_list'),
+    url(r'^statistics$', views.JsonStatisticsView.as_view(), name='predictions_statistics'),
     # url(r'^accounts/profile.json$', views.ListMyPredictions.as_view()),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^accounts/logout/$', auth_views.logout, name='logout'),

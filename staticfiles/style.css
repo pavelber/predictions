@@ -179,15 +179,47 @@ select {
 
 #predictions {
     display: grid;
-    grid-template-columns: auto auto auto auto;
+    grid-template-columns: auto auto auto auto auto;
     grid-gap: 3px;
     /*height: 100%;*/
     grid-auto-rows: auto;
 }
 
+#top_line{
+    display: grid;
+    grid-template-columns: auto auto;
+}
 #selectors {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
+    grid-column: 1 / 2
+}
+
+.warning {
+    font-size: 0.8em;
+    font-weight: bold;
+    grid-column: 2 / 3
 }
 
 
+
+/*Styles for predictions*/
+.fulfilled {
+    background-color: lightgreen;
+}
+
+.notfulfilled {
+    background-color: lightpink;
+}
+
+.waitingforconfirmation {
+    background-color: #bed9ed;
+}
+
+.waitingforconfirmationtext {
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% { opacity: 0; }
+}

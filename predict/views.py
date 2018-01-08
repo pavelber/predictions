@@ -13,7 +13,7 @@ from django.views.generic.base import View
 from django.views.generic.edit import FormView
 
 from predict.forms import PredictionForm
-from predict.models import Prediction, PredictionWithRole, send_email
+from predict.models import Prediction, PredictionWithRole, send_email, link_to_prediction, OPPONENT_ROLE, WITNESS_ROLE
 from .forms import ContactForm
 
 
@@ -23,13 +23,32 @@ class BaseTemplateView(TemplateView):
                       {"logged_in": self.request.user.is_authenticated})
 
 
+class JsonStatisticsView(View):
+    def get(self, request, *args, **kwargs):
+        current_user = self.request.user
+        predictions = self.get_predictions()
+        pending_confirmation = len(list(filter(
+            lambda p:
+            (p.witness == current_user and p.witness_confirmed is False) or
+            (p.opponent == current_user and p.opponent_confirmed is False), predictions)))
+        pending_resolution = len(list(filter(
+            lambda p:
+            p.witness == current_user and p.witness_confirmed is True and p.prediction_occurred is None, predictions)))
+        return JsonResponse({"pending_confirmation": pending_confirmation, "pending_resolution": pending_resolution})
+
+    def get_predictions(self):
+        current_user = self.request.user
+        role_filter = create_filter_from_role("my", current_user)
+        predictions = Prediction.objects.filter(role_filter)
+        return list(predictions)
+
+
 class JsonPredictionList(View):
     def get(self, request, *args, **kwargs):
         predictions = self.get_predictions()
         json = list(
             map(lambda p: serialize(p), predictions)
         )
-
         return JsonResponse({"predictions": json})
 
     def get_predictions(self):
@@ -237,6 +256,11 @@ def create_filter_from_role(role, current_user):
     if role == 'my':
         role_filter = Q(creator=current_user) | Q(witness=current_user) | Q(opponent=current_user) | Q(
             observers__email=current_user.email)
+    elif role == 'pending':
+        role_filter = (Q(witness=current_user) & Q(witness_confirmed=False)) | (
+                Q(opponent=current_user) & Q(opponent_confirmed=False))
+    elif role == 'notresolved':
+        role_filter = Q(witness=current_user) & Q(witness_confirmed=True) & Q(prediction_occurred=None)
     else:
         role_filter = None
 
@@ -274,6 +298,16 @@ def create_filter_from(filters):
     return Prediction.objects.filter(all_filter)
 
 
+def create_comment(p):
+    if (p.role == OPPONENT_ROLE and not p.prediction.opponent_confirmed) or (
+            p.role == WITNESS_ROLE and not p.prediction.witness_confirmed):
+        return "Confirm your participation!"
+    elif p.role == WITNESS_ROLE and p.prediction.prediction_occurred and datetime.date.today() > p.prediction.date:
+        return "Decide the wager fate!"
+    else:
+        return ""
+
+
 def serialize(p):
     return {
         "title": p.prediction.title,
@@ -283,5 +317,7 @@ def serialize(p):
         "opponent_confirmed": p.prediction.opponent_confirmed,
         "witness_confirmed": p.prediction.witness_confirmed,
         "pid": p.prediction.id,
-        "role": p.role
+        "role": p.role,
+        "link": link_to_prediction(p.prediction.id),
+        "comment": create_comment(p)
     }

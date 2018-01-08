@@ -13,9 +13,17 @@ Simplifications:
 
 TODO:
 add share on facebook link to emails
-add invtations div - where wait your confirmation
+paging
 Test mobile
 
 баннеры для ФБ
-Mark in color or something like this won/lost in prediction page
+Mark in color or something like this won/lost in prediction
 
+Article:
+1. initial design - which pages? what to show?
+2. inital impl - which framework - create new instance, list of instances
+3. social login - important
+4. Dont know how to put items on page (and implementation when decided), colors and fonts,
+5. moving from framework to rest +js
+6. learned css grid. still problems to invent good layout
+7. many use cases not though about  all the time added something to minimal value product even when tried to simplify
