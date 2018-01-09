@@ -16,6 +16,10 @@ def link_to_prediction(pk):
     return config('SITE_URL') + "/oauth/login/google-oauth2/?next=" + reverse('prediction', kwargs={'pk': pk})
 
 
+def direct_link_to_prediction(pk):
+    return config('SITE_URL') + reverse('prediction', kwargs={'pk': pk})
+
+
 class Predictor(User):
     class Meta:
         proxy = True

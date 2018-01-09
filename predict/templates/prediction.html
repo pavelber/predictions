@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Arg You! Edit/view wager{% endblock %}
+{% block title %} {% if  form.prediction_title.initial %} {{ form.prediction_title.initial }} {% else %}Arg You! Edit
+    wager {% endif %}{% endblock %}
 {% block head %}
     <script type="text/javascript" src="/admin/jsi18n/"></script>
     <script type="text/javascript" src="/static/admin/js/core.js"></script>

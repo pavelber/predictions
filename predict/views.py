@@ -13,7 +13,8 @@ from django.views.generic.base import View
 from django.views.generic.edit import FormView
 
 from predict.forms import PredictionForm
-from predict.models import Prediction, PredictionWithRole, send_email, link_to_prediction, OPPONENT_ROLE, WITNESS_ROLE
+from predict.models import Prediction, PredictionWithRole, send_email, link_to_prediction, OPPONENT_ROLE, WITNESS_ROLE, \
+    direct_link_to_prediction
 from .forms import ContactForm
 
 
@@ -323,6 +324,6 @@ def serialize(p):
         "witness_confirmed": p.prediction.witness_confirmed,
         "pid": p.prediction.id,
         "role": p.role,
-        "link": link_to_prediction(p.prediction.id),
+        "link": direct_link_to_prediction(p.prediction.id),
         "comment": create_comment(p)
     }
