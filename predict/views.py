@@ -26,14 +26,19 @@ class BaseTemplateView(TemplateView):
 class JsonStatisticsView(View):
     def get(self, request, *args, **kwargs):
         current_user = self.request.user
-        predictions = self.get_predictions()
-        pending_confirmation = len(list(filter(
-            lambda p:
-            (p.witness == current_user and p.witness_confirmed is False) or
-            (p.opponent == current_user and p.opponent_confirmed is False), predictions)))
-        pending_resolution = len(list(filter(
-            lambda p:
-            p.witness == current_user and p.witness_confirmed is True and p.prediction_occurred is None, predictions)))
+        if current_user.is_authenticated:
+            predictions = self.get_predictions()
+            pending_confirmation = len(list(filter(
+                lambda p:
+                (p.witness == current_user and p.witness_confirmed is False) or
+                (p.opponent == current_user and p.opponent_confirmed is False), predictions)))
+            pending_resolution = len(list(filter(
+                lambda p:
+                p.witness == current_user and p.witness_confirmed is True and p.prediction_occurred is None,
+                predictions)))
+        else:
+            pending_resolution = 0
+            pending_confirmation = 0
         return JsonResponse({"pending_confirmation": pending_confirmation, "pending_resolution": pending_resolution})
 
     def get_predictions(self):
