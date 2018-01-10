@@ -16,7 +16,6 @@ name of sender in mails
 add share on facebook link to emails
 paging
 
-logout
 
 баннеры для ФБ
 

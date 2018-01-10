@@ -240,8 +240,13 @@ p.text {
         font-size: 12px;
     }
 
+    .container {
+    grid-template-columns: 1fr 10fr;
+}
+
+
     #argyou-header {
-        font-size: 1em;
+        font-size: 1.5em;
     }
 
     #argyou-menu {
