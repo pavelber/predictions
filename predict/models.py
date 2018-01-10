@@ -20,21 +20,24 @@ def direct_link_to_prediction(pk):
     return config('SITE_URL') + reverse('prediction', kwargs={'pk': pk})
 
 
+def fullname(user):
+        if (user.first_name and user.first_name != "") or (user.last_name and user.last_name != ""):
+            name = user.first_name + " " + user.last_name
+        else:
+            name = user.email
+        return name
+ 
+ 
 class Predictor(User):
     class Meta:
         proxy = True
 
-    def fullname(self):
-        if (self.first_name and self.first_name != "") or (self.last_name and self.last_name != ""):
-            name = self.first_name + " " + self.last_name
-        else:
-            name = self.email
-        return name
+   
 
     def send_invitation_email(self, prediction, role, text, is_new_user):
         send_email("You are invited participate in a wager",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_invitation.html',
-                   {'creator': prediction.creator.email,
+                   {'creator': fullname(prediction.creator),
                     'link': link_to_prediction(prediction.id),
                     'role': role,
                     'new_user': is_new_user,
@@ -51,7 +54,7 @@ class Predictor(User):
     def send_after_reminder_email(self, prediction):
         send_email("Wager: decision was not made!",
                    config('DEFAULT_FROM_EMAIL'), self.email, 'email_after.html',
-                   {'creator': prediction.creator.email,
+                   {'creator': fullname(prediction.creator),
                     'link': link_to_prediction(prediction.id),
                     'title': prediction.title
                     })
@@ -122,7 +125,7 @@ class Prediction(models.Model):
 
     def send_witness_email(self):
         send_email("Wager: It's time to decide",
-                   config('DEFAULT_FROM_EMAIL'), self.witness.email, 'email_time_to_decide.html',
+                   config('DEFAULT_FROM_EMAIL'), self.creator.email, 'email_time_to_decide.html',
                    {'link': link_to_prediction(self.id),
                     'title': self.title})
 
@@ -161,6 +164,6 @@ def send_email(subject, from_email, to, template, ctx):
     text_content = strip_tags(html_content)  # this strips the html, so people will have the text as well.
 
     # create the email, and attach the HTML version as well.
-    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg = EmailMultiAlternatives(subject, text_content, f"ArgYou<{from_email}>", [to])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
