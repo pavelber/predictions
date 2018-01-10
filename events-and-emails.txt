@@ -12,12 +12,16 @@ Simplifications:
 
 
 TODO:
+show prediction outcome in prediction page!!!
+
+name of sender in mails
 add share on facebook link to emails
 paging
-Test mobile
+
+logout
 
 баннеры для ФБ
-Mark in color or something like this won/lost in prediction
+
 
 Article:
 1. initial design - which pages? what to show?
@@ -27,3 +31,4 @@ Article:
 5. moving from framework to rest +js
 6. learned css grid. still problems to invent good layout
 7. many use cases not though about  all the time added something to minimal value product even when tried to simplify
+8. mobile

@@ -10,9 +10,9 @@
                 {% if logged_in %}
                     <option value="my">My</option>{% endif %}
                 {% if logged_in %}
-                    <option value="pending">Pending confirmation</option>{% endif %}
+                    <option value="pending">To Confirm</option>{% endif %}
                 {% if logged_in %}
-                    <option value="notresolved">Pending Resolution</option>{% endif %}
+                    <option value="notresolved">To Resolve</option>{% endif %}
                 <option value="all">All</option>
             </select>
             <select id="status_selector" onchange="select_changed(false)">

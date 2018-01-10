@@ -56,15 +56,12 @@
 
         {% endif %}
         {% if show_subscribe and logged_in %}
-
-
             <label for="{{ form.subscribed.id_for_label }}">Subscribe to the prediction
                 notifications?</label>
             <div> {{ form.subscribed }}</div>
 
         {% endif %}
         {% if show_prediction_confirmation %}
-
             <label for="{{ form.prediction_occurred.id_for_label }}">Fulfilled?</label>
             <div>{{ form.prediction_occurred }}</div>
 
@@ -111,6 +108,7 @@
             </a>
         </div>
     {% endif %}
+    {%  if details_editable %}
     <script>
         $(function () {
             $("#id_prediction_date").datepicker({
@@ -122,5 +120,6 @@
             });
         });
     </script>
+    {%  endif %}
 {% endblock %}
 

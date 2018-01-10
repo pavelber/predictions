@@ -171,7 +171,7 @@ class PredictionView(PredictionBase):
         show_opponent_confirmation = is_opponent and not prediction.opponent_confirmed
         show_prediction_confirmation = is_witness and prediction.witness_confirmed
         show_names = is_witness or is_opponent or is_creator
-        show_subscribe = is_subscriber
+        show_subscribe = is_subscriber and prediction.prediction_occurred is None
         show_delete = is_creator
 
         witness_confirmed = prediction.witness_confirmed

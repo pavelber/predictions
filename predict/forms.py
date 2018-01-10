@@ -1,7 +1,6 @@
 from datetime import date, timedelta
 
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget
 
 from predict.models import Prediction, Predictor, WITNESS_ROLE, OPPONENT_ROLE
 
@@ -55,14 +54,14 @@ class PredictionForm(forms.Form):
         self.fields['witness_confirmed'].required = show_witness_confirmation
         self.fields['opponent_confirmed'].required = show_opponent_confirmation
 
-    prediction_title = forms.CharField()
-    prediction_text = forms.CharField(widget=forms.Textarea)
+    prediction_title = forms.CharField(widget=forms.TextInput(attrs={'size': 80, 'class': 'form-text', }))
+    prediction_text = forms.CharField(widget=forms.Textarea(attrs={'rows': 10, 'cols': 80, 'class': 'form-text'}))
     one_week = date.today() + timedelta(days=7)
     prediction_date = forms.DateField()
 
-    creator_name = forms.CharField()
-    witness_email = forms.EmailField()
-    opponent_email = forms.EmailField()
+    creator_name = forms.CharField(widget=forms.TextInput(attrs={'size': 80, 'class': 'form-name'}))
+    witness_email = forms.EmailField(widget=forms.TextInput(attrs={'size': 80, 'class': 'form-name'}))
+    opponent_email = forms.EmailField(widget=forms.TextInput(attrs={'size': 80, 'class': 'form-name'}))
     witness_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO)
     opponent_confirmed = forms.TypedChoiceField(choices=CHOICES_YES_NO)
     prediction_occurred = forms.TypedChoiceField(choices=CHOICES_THINKING_YES_NO, required=False)

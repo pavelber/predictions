@@ -79,7 +79,7 @@ p.text {
 .container {
     display: grid;
     grid-template-columns: 1fr 12fr;
-    grid-template-rows: 50px auto auto 30px;
+    grid-template-rows: auto auto auto 30px;
     grid-gap: 3px;
     height: 100%;
 }
@@ -169,6 +169,14 @@ select {
     grid-column: 2 / 3;
 }
 
+.form-text {
+    width: 70%;
+}
+
+.form-name {
+    width: 30%;
+}
+
 #argyou-submit {
     grid-column: 1 / 2
 }
@@ -185,10 +193,11 @@ select {
     grid-auto-rows: auto;
 }
 
-#top_line{
+#top_line {
     display: grid;
     grid-template-columns: auto auto;
 }
+
 #selectors {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
@@ -200,8 +209,6 @@ select {
     font-weight: bold;
     grid-column: 2 / 3
 }
-
-
 
 /*Styles for predictions*/
 .fulfilled {
@@ -221,5 +228,39 @@ select {
 }
 
 @keyframes blinker {
-  50% { opacity: 0; }
+    50% {
+        opacity: 0;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    html {
+        font-size: 12px;
+    }
+
+    #argyou-header {
+        display: none;
+        font-size: 1em;
+        margin-bottom: 2px;
+    }
+
+    #argyou-menu {
+        margin-bottom: 2px
+    }
+
+    #argyou-menu a {
+        padding: 2px 2px
+    }
+
+    #predict-form {
+        width: 100%;
+    }
+
+    .form-text {
+        width: 100%;
+    }
+
+    .form-name {
+        width: 100%;
+    }
 }
