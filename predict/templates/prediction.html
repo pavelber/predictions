@@ -17,52 +17,53 @@
         {% csrf_token %}
         {{ form.non_field_errors }}
         {{ form.pid }}
-        <label for="{{ form.prediction_title.id_for_label }}">Title:</label>
+        <label class="form_label" for="{{ form.prediction_title.id_for_label }}">Title:</label>
         {{ form.prediction_title }}
 
 
-        <label for="{{ form.prediction_text.id_for_label }}">Text:</label>
+        <label class="form_label" for="{{ form.prediction_text.id_for_label }}">Text:</label>
         {{ form.prediction_text }}
 
-        <label for="{{ form.prediction_date.id_for_label }}">Date:</label>
+        <label class="form_label" for="{{ form.prediction_date.id_for_label }}">Date:</label>
         <div>{{ form.prediction_date }}</div>
 
         {% if show_names %}
 
 
-            <label for="{{ form.creator_name.id_for_label }}">Creator:</label>
+            <label class="form_label" for="{{ form.creator_name.id_for_label }}">Creator:</label>
             {{ form.creator_name }}
 
 
-            <label for="{{ form.witness_email.id_for_label }}">Referee:</label>
+            <label class="form_label" for="{{ form.witness_email.id_for_label }}">Referee:</label>
             {{ form.witness_email }}
 
-            <label for="{{ form.opponent_email.id_for_label }}">Opponent:</label>
+            <label class="form_label" for="{{ form.opponent_email.id_for_label }}">Opponent:</label>
             {{ form.opponent_email }}
 
         {% endif %}
         {% if show_witness_confirmation %}
 
 
-            <label for="{{ form.witness_confirmed.id_for_label }}">Confirm participation:</label>
+            <label class="form_label" for="{{ form.witness_confirmed.id_for_label }}">Confirm participation:</label>
             <div>{{ form.witness_confirmed }}</div>
 
         {% endif %}
         {% if show_opponent_confirmation %}
 
 
-            <label for="{{ form.opponent_confirmed.id_for_label }}">Confirm <br/>participation:</label>
+            <label class="form_label" for="{{ form.opponent_confirmed.id_for_label }}">Confirm
+                <br/>participation:</label>
             <div> {{ form.opponent_confirmed }}</div>
 
         {% endif %}
         {% if show_subscribe and logged_in %}
-            <label for="{{ form.subscribed.id_for_label }}">Subscribe to the prediction
+            <label class="form_label" for="{{ form.subscribed.id_for_label }}">Subscribe to the prediction
                 notifications?</label>
             <div> {{ form.subscribed }}</div>
 
         {% endif %}
         {% if show_prediction_confirmation %}
-            <label for="{{ form.prediction_occurred.id_for_label }}">Fulfilled?</label>
+            <label class="form_label" for="{{ form.prediction_occurred.id_for_label }}">Fulfilled?</label>
             <div>{{ form.prediction_occurred }}</div>
 
         {% endif %}
@@ -92,7 +93,17 @@
                 </div>
             {% endfor %}
         {% endif %}
+
     </form>
+    {% if prediction_occurred is not None %}
+        <div id="wager_result" class="{% if prediction_occurred %}fulfilled{% else %}notfulfilled{% endif %}" >
+            By the decision of the referee in this wager, the prediction was
+            {% if not prediction_occurred %}
+                NOT
+            {% endif %}
+            fulfilled
+        </div>
+    {% endif %}
 
     {% if not new_form %}
         <div style="width: 300px">
@@ -108,18 +119,18 @@
             </a>
         </div>
     {% endif %}
-    {%  if details_editable %}
-    <script>
-        $(function () {
-            $("#id_prediction_date").datepicker({
-                dateFormat: 'yy-mm-dd',
-                yearRange: '1999:2222',
-                minDate: '+10D',
-                maxDate: '+10Y',
-                inline: true
+    {% if details_editable %}
+        <script>
+            $(function () {
+                $("#id_prediction_date").datepicker({
+                    dateFormat: 'yy-mm-dd',
+                    yearRange: '1999:2222',
+                    minDate: '+10D',
+                    maxDate: '+10Y',
+                    inline: true
+                });
             });
-        });
-    </script>
-    {%  endif %}
+        </script>
+    {% endif %}
 {% endblock %}
 
