@@ -6,6 +6,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from predict.cron import check_one_week_before, check_exact_date, check_one_week_after, run_tasks_hourly
 from . import views
 
+
 urlpatterns = [
     url(r'^$', views.PredictionList.as_view(), name='prediction_list'),
     url(r'^new$', views.PredictionNew.as_view(), name='prediction_new'),
@@ -18,7 +19,7 @@ urlpatterns = [
     url(r'^statistics$', views.JsonStatisticsView.as_view(), name='predictions_statistics'),
     # url(r'^accounts/profile.json$', views.ListMyPredictions.as_view()),
     url(r'^login/$', auth_views.login, name='login'),
-    url(r'^accounts/logout/$', auth_views.logout, name='logout'),
+    url(r'^logout/$', views.logout, name='logout'),
     url(r'^oauth/', include('social_django.urls', namespace='social')),  # <--
     url(r'^admin/', admin.site.urls),
     url(r'^email/$', views.email, name='email'),

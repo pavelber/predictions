@@ -44,6 +44,8 @@
         <a href={% url "email" %}>Contact Us</a>
         {% if not logged_in %}
             <a href={% url 'social:begin' 'google-oauth2' %}>Login</a>
+        {% else %}
+            <a href="{% url "logout" %}">Logout</a>
         {% endif %}
     </div>
     {% if not logged_in %}
@@ -59,6 +61,5 @@
 
 </div>
 <div id="argyou-footer">&copy Ieruham Analytics, 2017,2018</div>
-</div>
 </body>
 </html>

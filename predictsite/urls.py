@@ -19,7 +19,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.i18n import JavaScriptCatalog
 
 urlpatterns = [
-    url(r'^admin/jsi18n', JavaScriptCatalog.as_view()),
     url(r'^admin/', admin.site.urls),
     url(r'', include('predict.urls')),
 

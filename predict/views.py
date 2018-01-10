@@ -1,4 +1,5 @@
 import datetime
+from django.contrib.auth import logout as auth_logout
 
 from decouple import config
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,7 +7,8 @@ from django.core.mail import BadHeaderError, EmailMultiAlternatives
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
+from django.template import RequestContext
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django.views.generic.base import View
@@ -328,3 +330,9 @@ def serialize(p):
         "link": direct_link_to_prediction(p.prediction.id),
         "comment": create_comment(p)
     }
+
+
+def logout(request):
+    """Logs out user"""
+    auth_logout(request)
+    return render_to_response('prediction_list.html', {}, RequestContext(request))
