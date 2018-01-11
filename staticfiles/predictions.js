@@ -1,12 +1,12 @@
 function get_style(p) {
-    if (p.role === "creator" && p.prediction_occurred === "Fulfilled")
-        return "fulfilled";
-    else if (p.role === "creator" && p.prediction_occurred === "Not Fulfilled")
-        return "notfulfilled";
-    else if (p.role === "opponent" && p.prediction_occurred === "Not Fulfilled")
-        return "fulfilled";
-    else if (p.role === "opponent" && p.prediction_occurred === "Fulfilled")
-        return "notfulfilled";
+    if (p.prediction_occurred === "Won")
+        return "won";
+    else if (p.prediction_occurred === "Lost")
+        return "lost";
+    else if (p.prediction_occurred === "Fulfilled")
+        return "won";
+    else if (p.prediction_occurred === "Not Fulfilled")
+        return "lost";
     else if ((p.opponent_confirmed === false && p.role === "opponent") ||
         (p.witness_confirmed === false && p.role === "witness"))
         return "waitingforconfirmation";
@@ -32,7 +32,7 @@ function put_stats(data) {
     if (pending_confirmation !== 0)
         w_div.append('<div class="warning"><a href="javascript:showPending(\'pending\')">' + pending_confirmation + ' wager(s) is waiting for your confirmation</a></div>')
     if (pending_resolution !== 0)
-        w_div.append('<div class="warning"><a href="javascript:showPending(\'notfinished\')">' + pending_resolution + ' wager(s) is waiting for your decision</a></div>')
+        w_div.append('<div class="warning"><a href="javascript:showPending(\'notresolved\')">' + pending_resolution + ' wager(s) is waiting for your decision</a></div>')
 }
 
 function put_data(refresh_if_no, data) {

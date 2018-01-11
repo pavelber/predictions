@@ -88,13 +88,21 @@ class Prediction(models.Model):
     date_mail_sent = models.BooleanField(default=False)
     after_mails_sent = models.BooleanField(default=False)
 
-    observers = models.ManyToManyField(Predictor);
+    observers = models.ManyToManyField(Predictor)
 
-    def prediction_occurred_as_string(self):
+    def prediction_occurred_as_string(self,user):
         if self.prediction_occurred is None:
             return ""
+        elif self.prediction_occurred and user == self.creator:
+            return "Won"
+        elif self.prediction_occurred and user == self.opponent:
+            return "Lost"
         elif self.prediction_occurred:
             return "Fulfilled"
+        elif not self.prediction_occurred and user == self.creator:
+            return "Lost"
+        elif not self.prediction_occurred and user == self.opponent:
+            return "Won"
         else:
             return "Not Fulfilled"
 

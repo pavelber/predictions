@@ -96,12 +96,16 @@
 
     </form>
     {% if prediction_occurred is not None %}
-        <div id="wager_result" class="{% if prediction_occurred %}fulfilled{% else %}notfulfilled{% endif %}" >
-            By the decision of the referee in this wager, the prediction was
-            {% if not prediction_occurred %}
-                NOT
+        <div id="wager_result" class="{% if won or prediction_occurred %}won{% else %}lost{% endif %}">
+            By the decision of the referee in this wager,
+            {% if won %}you won this wager{% elif lost %}you lost this wager
+            {% else %}
+                the prediction was
+                {% if not prediction_occurred %}
+                    NOT
+                {% endif %}
+                fulfilled
             {% endif %}
-            fulfilled
         </div>
     {% endif %}
 

@@ -12,6 +12,12 @@ Simplifications:
 
 
 TODO:
+
+Remember filter in cookies
+duplicated in 3 places logic for won/lost and text statuses
+duplicated in 2 places (Q and code logic for pending wagers
+
+
 paging
 
 
@@ -21,7 +27,7 @@ paging
 Article:
 1. initial design - which pages? what to show?
 2. inital impl - which framework - create new instance, list of instances
-3. social login - important
+3. social login - important, security (.env) помогало что знал как принято
 4. Dont know how to put items on page (and implementation when decided), colors and fonts,
 5. moving from framework to rest +js
 6. learned css grid. still problems to invent good layout

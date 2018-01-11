@@ -213,11 +213,11 @@ p.text {
 }
 
 /*Styles for predictions*/
-.fulfilled {
+.won {
     background-color: lightgreen;
 }
 
-.notfulfilled {
+.lost {
     background-color: lightpink;
 }
 

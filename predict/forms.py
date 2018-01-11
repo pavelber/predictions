@@ -34,6 +34,8 @@ class PredictionForm(forms.Form):
         prediction_occurred = kwargs.pop('prediction_occurred', False)
         opponent_confirmed = kwargs.pop('opponent_confirmed', False)
         logged_in = kwargs.pop('logged_in', False)
+        won = kwargs.pop('won', False)
+        lost = kwargs.pop('lost', False)
         pid = kwargs.pop('pid', None)
         super(PredictionForm, self).__init__(*args, **kwargs)
         if method == "GET":

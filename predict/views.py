@@ -1,7 +1,7 @@
 import datetime
-from django.contrib.auth import logout as auth_logout
 
 from decouple import config
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import BadHeaderError, EmailMultiAlternatives
 from django.core.urlresolvers import reverse_lazy
@@ -15,7 +15,7 @@ from django.views.generic.base import View
 from django.views.generic.edit import FormView
 
 from predict.forms import PredictionForm
-from predict.models import Prediction, PredictionWithRole, send_email, link_to_prediction, OPPONENT_ROLE, WITNESS_ROLE, \
+from predict.models import Prediction, PredictionWithRole, send_email, OPPONENT_ROLE, WITNESS_ROLE, \
     direct_link_to_prediction
 from .forms import ContactForm
 
@@ -37,7 +37,8 @@ class JsonStatisticsView(View):
                 (p.opponent == current_user and p.opponent_confirmed is False), predictions)))
             pending_resolution = len(list(filter(
                 lambda p:
-                p.witness == current_user and p.witness_confirmed is True and p.prediction_occurred is None,
+                p.witness == current_user and p.witness_confirmed is True and p.opponent_confirmed is True and
+                p.prediction_occurred is None and p.date < datetime.date.today(),
                 predictions)))
         else:
             pending_resolution = 0
@@ -55,7 +56,7 @@ class JsonPredictionList(View):
     def get(self, request, *args, **kwargs):
         predictions = self.get_predictions()
         json = list(
-            map(lambda p: serialize(p), predictions)
+            map(lambda p: serialize(p, self.request.user), predictions)
         )
         return JsonResponse({"predictions": json})
 
@@ -180,12 +181,15 @@ class PredictionView(PredictionBase):
         witness_confirmed = prediction.witness_confirmed
         opponent_confirmed = prediction.opponent_confirmed
         prediction_occurred = prediction.prediction_occurred
+        won = (prediction_occurred and is_creator) or (not prediction_occurred and is_opponent)
+        lost = (prediction_occurred and is_opponent) or (not prediction_occurred and is_creator)
         details = {'details_editable': details_editable, 'show_witness_confirmation': show_witness_confirmation,
                    'show_opponent_confirmation': show_opponent_confirmation,
                    'show_prediction_confirmation': show_prediction_confirmation, 'show_names': show_names,
                    'show_subscribe': show_subscribe, 'show_delete': show_delete, 'pid': prediction.id,
                    'show_submit': show_submit, 'opponent_confirmed': opponent_confirmed,
                    'prediction_occurred': prediction_occurred, 'witness_confirmed': witness_confirmed,
+                   'won': won, 'lost': lost,
                    "logged_in": logged_in}
 
         return details
@@ -269,7 +273,8 @@ def create_filter_from_role(role, current_user):
         role_filter = (Q(witness=current_user) & Q(witness_confirmed=False)) | (
                 Q(opponent=current_user) & Q(opponent_confirmed=False))
     elif role == 'notresolved':
-        role_filter = Q(witness=current_user) & Q(witness_confirmed=True) & Q(prediction_occurred=None)
+        role_filter = Q(witness=current_user) & Q(witness_confirmed=True) & Q(opponent_confirmed=True) & Q(
+            prediction_occurred=None) & Q(date__lte=datetime.date.today())
     else:
         role_filter = None
 
@@ -317,12 +322,12 @@ def create_comment(p):
         return ""
 
 
-def serialize(p):
+def serialize(p, user):
     return {
         "title": p.prediction.title,
         "date": p.prediction.date,
         "text": p.prediction.text,
-        "prediction_occurred": p.prediction.prediction_occurred_as_string(),
+        "prediction_occurred": p.prediction.prediction_occurred_as_string(user),
         "opponent_confirmed": p.prediction.opponent_confirmed,
         "witness_confirmed": p.prediction.witness_confirmed,
         "pid": p.prediction.id,
