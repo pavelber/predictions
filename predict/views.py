@@ -316,7 +316,7 @@ def create_comment(p):
     if (p.role == OPPONENT_ROLE and not p.prediction.opponent_confirmed) or (
             p.role == WITNESS_ROLE and not p.prediction.witness_confirmed):
         return "Confirm your participation!"
-    elif p.role == WITNESS_ROLE and p.prediction.prediction_occurred and datetime.date.today() > p.prediction.date:
+    elif p.role == WITNESS_ROLE and p.prediction.prediction_occurred is None and datetime.date.today() > p.prediction.date:
         return "Decide the wager fate!"
     else:
         return ""

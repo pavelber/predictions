@@ -12,7 +12,7 @@ Simplifications:
 
 
 TODO:
-
+check creator referee and opponent are different
 Remember filter in cookies
 duplicated in 3 places logic for won/lost and text statuses
 duplicated in 2 places (Q and code logic for pending wagers
