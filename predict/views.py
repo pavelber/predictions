@@ -245,7 +245,8 @@ class SuccessView(BaseTemplateView):
 def send_contact_mail(subject, message, from_email):
     msg = EmailMultiAlternatives(subject, message, from_email, [config('ADMIN_EMAIL')])
     msg.attach_alternative(message, "text/plain")
-    msg.send()
+    #msg.send()
+
 
 
 def email(request):

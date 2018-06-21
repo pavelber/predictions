@@ -174,4 +174,4 @@ def send_email(subject, from_email, to, template, ctx):
     # create the email, and attach the HTML version as well.
     msg = EmailMultiAlternatives(subject, text_content, f"ArgYou<{from_email}>", [to])
     msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    #msg.send()
