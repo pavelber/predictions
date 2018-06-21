@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/predictions.iml" filepath="$PROJECT_DIR$/.idea/predictions.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/predictsite.iml" filepath="$PROJECT_DIR$/.idea/predictsite.iml" />
     </modules>
   </component>

@@ -72,7 +72,8 @@ class PredictionForm(forms.Form):
 
     def clean_prediction_date(self):
         prediction_date = self.cleaned_data['prediction_date']
-        if prediction_date < date.today() + timedelta(days=7):
+        prediction_occurred = self.cleaned_data['prediction_occurred']
+        if  prediction_occurred in ('True', 'False') and prediction_date < date.today() + timedelta(days=7):
             raise forms.ValidationError("Date should be in a week or more from now!")
         return prediction_date
 
